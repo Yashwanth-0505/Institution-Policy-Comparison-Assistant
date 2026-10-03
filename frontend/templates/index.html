@@ -6,7 +6,7 @@
 <title>POLICYX — Institutional Policy Intelligence</title>
 <link rel="preconnect" href="https://api.fontshare.com">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20261003_v2">
 </head>
 <body>
 <a class="skip" href="#content">Skip to comparison</a>
@@ -26,7 +26,6 @@
 <span>POLICYX</span>
 </div>
 <div class="header-actions">
-<button id="demo" class="btn btn-secondary">Load demo</button>
 <button id="theme" class="icon-btn" aria-label="Switch color theme" title="Switch theme">◐</button>
 <a href="/logout" class="btn btn-secondary" style="font-size:13px;padding:6px 14px;text-decoration:none">Logout</a>
 </div>
@@ -80,7 +79,6 @@ Local analysis engine • Embeddings ready • No cloud required
 
 <div class="action-stack">
 <button id="compare" class="btn btn-primary">Compare Policies</button>
-<button id="demo-alt" class="btn btn-secondary">Or Load Sample</button>
 <button id="clear" class="btn btn-ghost">Clear</button>
 </div>
 </section>
@@ -101,32 +99,84 @@ Local analysis engine • Embeddings ready • No cloud required
       </div>
 
       <div class="inv-body">
-        <div class="inv-form-group">
-          <label for="inv-institution">Institution Name *</label>
-          <input type="text" id="inv-institution" placeholder="e.g., ABC College" required>
-        </div>
 
-        <div class="inv-form-group">
-          <label for="inv-university">Affiliating University *</label>
-          <input type="text" id="inv-university" placeholder="e.g., XYZ University" required>
-        </div>
-
-        <div class="inv-form-group">
-          <label for="inv-policy-title">Policy Title *</label>
-          <input type="text" id="inv-policy-title" placeholder="e.g., Academic Regulations" required>
-        </div>
-
-        <div class="inv-form-row">
+        <!-- Q1 Block: University / Institution -->
+        <div class="inv-question-block">
+          <div class="inv-question-label">Q1 — Affiliating University</div>
           <div class="inv-form-group">
-            <label for="inv-department">Department <span class="optional">(optional)</span></label>
-            <input type="text" id="inv-department" placeholder="e.g., Computer Science">
-          </div>
-
-          <div class="inv-form-group">
-            <label for="inv-year">Academic Year <span class="optional">(optional)</span></label>
-            <input type="text" id="inv-year" placeholder="e.g., 2024-25">
+            <label for="inv-university">Affiliating University *</label>
+            <input type="text" id="inv-university" placeholder="e.g., Osmania University / VTU / Anna University" required>
+            <input type="hidden" id="inv-institution" value="">
           </div>
         </div>
+
+        <!-- Q2 Block: Policy Details -->
+        <div class="inv-question-block">
+          <div class="inv-question-label">Q2 — Policy Details</div>
+          <div class="inv-form-group">
+            <label for="inv-policy-title">Policy / Regulation Type *</label>
+            <input type="text" id="inv-policy-title"
+                   placeholder="e.g., Academic Regulations"
+                   list="policy-datalist"
+                   autocomplete="off" required>
+            <datalist id="policy-datalist">
+              <option value="Academic Regulations (CBCS / General)">
+              <option value="Examination Rules & Grading System">
+              <option value="Attendance & Condonation Policy">
+              <option value="Credit System & Promotion Rules">
+              <option value="Placement & Internship Mandate">
+              <option value="Admission Policy & Eligibility">
+              <option value="Code of Conduct & Disciplinary Policy">
+              <option value="Prevention of Malpractice & Unfair Means">
+              <option value="Library Rules & Borrowing Limit">
+              <option value="Fee Structure & Refund Rules">
+              <option value="Hostel & Campus Residence Rules">
+              <option value="Scholarship & Financial Aid Policy">
+              <option value="Research, M.Tech & Ph.D Regulations">
+              <option value="Syllabus & Curriculum Regulations">
+            </datalist>
+            <p class="inv-hint">Type or pick from the list — you can also enter your own policy name.</p>
+          </div>
+
+          <div class="inv-form-row">
+            <div class="inv-form-group">
+              <label for="inv-role">Who is this for? *</label>
+              <select id="inv-role">
+                <option value="student" selected>Student</option>
+                <option value="faculty">Faculty</option>
+                <option value="staff">Staff</option>
+                <option value="all">All (General)</option>
+              </select>
+            </div>
+            <div class="inv-form-group">
+              <label for="inv-programme">Programme Type *</label>
+              <select id="inv-programme">
+                <option value="B.Tech" selected>B.Tech / B.E.</option>
+                <option value="M.Tech">M.Tech / M.E.</option>
+                <option value="MBA">MBA</option>
+                <option value="MCA">MCA</option>
+                <option value="BCA">BCA</option>
+                <option value="B.Sc">B.Sc</option>
+                <option value="M.Sc">M.Sc</option>
+                <option value="PhD">Ph.D</option>
+                <option value="Diploma">Diploma</option>
+                <option value="General">General / All</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="inv-form-row">
+            <div class="inv-form-group">
+              <label for="inv-department">Department <span class="optional">(optional)</span></label>
+              <input type="text" id="inv-department" placeholder="e.g., Computer Science">
+            </div>
+            <div class="inv-form-group">
+              <label for="inv-year">Academic Year <span class="optional">(optional)</span></label>
+              <input type="text" id="inv-year" placeholder="e.g., 2024-25">
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div class="inv-footer">
@@ -333,7 +383,13 @@ function renderClauseDetail(r) {
       <span class="badge ${type}">${badge_label}</span>
     </div>
     ${score_html}
-    ${r.summary ? `<div class="detail-summary"><strong>Change:</strong> ${esc(r.summary)}</div>` : ''}
+    ${r.summary ? `
+    <div class="detail-summary-card">
+      <div class="summary-badge-bar">
+        <span class="summary-badge-pill">🤖 AI Summary (${(r.provider || 'Groq').toUpperCase()})</span>
+      </div>
+      <p class="summary-text-content">${esc(r.summary)}</p>
+    </div>` : ''}
   `;
   
   // Two-column view for matched pairs, single view for added/removed
@@ -435,24 +491,6 @@ $('#compare').onclick = async () => {
   }
 };
 
-$('#demo').onclick = $('#demo-alt').onclick = async () => {
-  const btn = $('#demo');
-  btn.disabled = true;
-  btn.textContent = 'Loading…';
-  setNotice('Loading sample policies...', 'loading');
-  try {
-    const r = await fetch('/sample');
-    const d = await r.json();
-    if (!r.ok) throw new Error('Failed to load');
-    load(d);
-  } catch(e) {
-    setNotice('Error: ' + e.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Load demo';
-  }
-};
-
 $('#search').oninput = renderNavigator;
 
 let theme = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
@@ -545,14 +583,16 @@ document.getElementById('inv-cancel-btn').addEventListener('click', closeInvesti
 document.getElementById('inv-manual-btn').addEventListener('click', closeInvestigation);
 
 document.getElementById('inv-search-btn').addEventListener('click', async () => {
-  const institution = document.getElementById('inv-institution').value.trim();
   const university  = document.getElementById('inv-university').value.trim();
-  const policyTitle = document.getElementById('inv-policy-title').value.trim();
+  const institution = university; // Auto-fill institution from university name
+  const policyTitle = document.getElementById('inv-policy-title').value;
+  const role        = document.getElementById('inv-role').value;
+  const programme   = document.getElementById('inv-programme').value;
   const department  = document.getElementById('inv-department').value.trim();
   const year        = document.getElementById('inv-year').value.trim();
 
-  if (!institution || !university || !policyTitle) {
-    alert('Institution, University, and Policy Title are required.');
+  if (!university || !policyTitle) {
+    alert('University Name and Policy Type are required.');
     return;
   }
 
@@ -568,6 +608,8 @@ document.getElementById('inv-search-btn').addEventListener('click', async () => 
         institution_name: institution,
         affiliating_university: university,
         policy_title: policyTitle,
+        role: role,
+        programme: programme,
         department,
         academic_year: year,
       }),
@@ -679,8 +721,8 @@ async function confirmCandidate(idx) {
 
     // Success — display results
     closeInvestigation();
-    displayResults(data.stats, data.rows);
-    showNotice('Comparison complete! Previous policy discovered and verified.', 'success');
+    renderResults(data);
+    setNotice('Comparison complete! Discovered previous policy verified.', 'ok');
 
   } catch (err) {
     showNotice('Network error during comparison.', 'error');

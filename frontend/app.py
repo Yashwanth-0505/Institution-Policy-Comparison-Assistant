@@ -13,8 +13,13 @@ from pathlib import Path
 from flask import (Flask, flash, jsonify, make_response, redirect,
                    render_template, request, url_for)
 
-# Ensure ml_pipeline is importable from d:\jig
+# Ensure ml_pipeline and frontend modules are importable
 sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent))
+
+# Load .env from project root
+from dotenv import load_dotenv
+load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 
 from ml_pipeline.pipeline import compare_policies
 from ml_pipeline.config import load_config
@@ -24,9 +29,21 @@ from database import (
     get_all_users, get_comparison_stats, log_comparison,
 )
 
+import secrets
+
 app = Flask(__name__)
-app.secret_key = os.environ.get("POLICYX_SECRET", "dev-secret-change-in-production-2026")
+app.secret_key = os.environ.get("POLICYX_SECRET") or secrets.token_hex(32)
 app.config["MAX_CONTENT_LENGTH"] = 32 * 1024 * 1024  # 32 MB
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+
+
+@app.after_request
+def add_no_cache_headers(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 CHANGE_COLORS = {
     "unchanged":   "#e8f5e9",
@@ -289,6 +306,9 @@ def investigate_context():
     inv.policy_title            = data.get("policy_title", "").strip()
     inv.department              = data.get("department", "").strip()
     inv.academic_year           = data.get("academic_year", "").strip()
+    # New fields
+    inv.extracted_metadata["role"]      = data.get("role", "").strip()
+    inv.extracted_metadata["programme"] = data.get("programme", "").strip()
 
     if not inv.institution_name or not inv.policy_title:
         return jsonify({"ok": False, "error": "Institution and policy title are required."}), 400
@@ -313,6 +333,8 @@ def investigate_context():
             inv.policy_title,
             inv.academic_year or inv.extracted_metadata.get("academic_year", ""),
             max_candidates=5,
+            role=inv.extracted_metadata.get("role", ""),
+            programme=inv.extracted_metadata.get("programme", ""),
         )
     except Exception as exc:
         inv.fail(f"Search failed: {exc}")

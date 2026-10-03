@@ -2,8 +2,8 @@
 summarizer.py — LLM-backed summary generation for the POLICYX ML pipeline.
 
 Provider chain (tried in order):
-  1. GeminiProvider  — uses google-genai SDK
-  2. GroqProvider    — uses openai SDK pointed at Groq endpoint
+  1. GroqProvider    — uses openai SDK pointed at Groq endpoint
+  2. GeminiProvider  — uses google-genai SDK
   3. DeterministicProvider — always available, no API required
 
 API keys are read exclusively from environment variables — never hardcoded.
@@ -349,8 +349,8 @@ class GroqProvider(SummaryProvider):
 # ---------------------------------------------------------------------------
 
 PROVIDER_CHAIN: list[type[SummaryProvider]] = [
-    GeminiProvider,
     GroqProvider,
+    GeminiProvider,
     DeterministicProvider,
 ]
 
