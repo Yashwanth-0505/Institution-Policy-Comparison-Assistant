@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POLICYX — Institution Policy Comparison Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+
+    <!-- Nav -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <div class="nav-logo">
+                <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
+                    <rect width="32" height="32" rx="6" fill="#087F78"/>
+                    <path d="M9 16L14 21L23 11" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>POLICYX</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How it works</a>
+                <a href="/login" class="nav-btn">Login / Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-badge">Built for JIG26_25 Hackathon</div>
+            <h1 class="hero-title">
+                See exactly what changed—<br>and where.
+            </h1>
+            <p class="hero-subtitle">
+                POLICYX aligns institution policy clauses by structure and meaning,
+                separates substantive edits from wording changes, and verifies every
+                result against both policy versions.
+            </p>
+            <div class="hero-actions">
+                <a href="/login" class="btn-hero-primary">Get Started Free</a>
+                <a href="#how-it-works" class="btn-hero-secondary">See how it works</a>
+            </div>
+            <div class="hero-meta">
+                <span class="meta-dot"></span> Local analysis engine
+                <span class="sep">·</span>
+                <span class="meta-dot"></span> Embeddings ready
+                <span class="sep">·</span>
+                <span class="meta-dot"></span> No cloud required
+            </div>
+        </div>
+
+        <!-- Hero visual -->
+        <div class="hero-visual">
+            <div class="mock-card">
+                <div class="mock-header">
+                    <div class="mock-title">Policy Comparison</div>
+                    <div class="mock-sub">Academic_Regulations_2025.pdf → 2026.pdf</div>
+                </div>
+                <div class="mock-stats">
+                    <div class="mock-stat red">
+                        <span class="mock-num">6</span>
+                        <span class="mock-label">Substantive</span>
+                    </div>
+                    <div class="mock-stat blue">
+                        <span class="mock-num">1</span>
+                        <span class="mock-label">Added</span>
+                    </div>
+                    <div class="mock-stat yellow">
+                        <span class="mock-num">0</span>
+                        <span class="mock-label">Wording</span>
+                    </div>
+                    <div class="mock-stat green">
+                        <span class="mock-num">0</span>
+                        <span class="mock-label">Unchanged</span>
+                    </div>
+                </div>
+                <div class="mock-clause active">
+                    <div class="mock-clause-header">
+                        <span class="mock-badge sub">SUBSTANTIVE</span>
+                        <span class="mock-score">Match 99.9%</span>
+                    </div>
+                    <div class="mock-clause-title">1. Attendance Policy</div>
+                    <div class="mock-diff">
+                        <div class="diff-old">...minimum attendance of <mark class="old">75%</mark>...</div>
+                        <div class="diff-arrow">→</div>
+                        <div class="diff-new">...minimum attendance of <mark class="new">80%</mark>...</div>
+                    </div>
+                </div>
+                <div class="mock-clause">
+                    <div class="mock-clause-header">
+                        <span class="mock-badge sub">SUBSTANTIVE</span>
+                        <span class="mock-score">Match 99.1%</span>
+                    </div>
+                    <div class="mock-clause-title">2. Minimum Passing Score</div>
+                </div>
+                <div class="mock-clause">
+                    <div class="mock-clause-header">
+                        <span class="mock-badge added">ADDED</span>
+                        <span class="mock-score">New clause</span>
+                    </div>
+                    <div class="mock-clause-title">6. Academic Integrity</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="section-inner">
+            <div class="section-label">What POLICYX does</div>
+            <h2 class="section-title">Every clause. Every change. Explained.</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon teal">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                    </div>
+                    <h3>Semantic Clause Alignment</h3>
+                    <p>TF-IDF baseline combined with sentence embeddings to align clauses even when headings or numbering change.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon red">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3>Substantive vs Wording</h3>
+                    <p>Detects numeric changes, negation flips, obligation shifts, and added/removed clauses separately from minor wording edits.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon blue">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                    </div>
+                    <h3>Citation Validation</h3>
+                    <p>Every detected change is cited back to the exact page and clause in the source PDF, so the result is always traceable.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon purple">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <h3>LLM Bounded Summaries</h3>
+                    <p>Language model generates concise explanations of each change — grounded only in the actual clause text, never hallucinated.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon orange">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                    </div>
+                    <h3>Investigation Mode</h3>
+                    <p>Only have the newer policy? POLICYX can search authoritative sources to locate the previous version and verify its provenance.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon green">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                    </div>
+                    <h3>Local ML Pipeline</h3>
+                    <p>Runs entirely on your machine. No data is sent to external servers. 66 unit tests covering every detection scenario.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-inner">
+            <div class="section-label">Process</div>
+            <h2 class="section-title">From PDF to insight in seconds.</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">01</div>
+                    <div class="step-content">
+                        <h3>Upload two policy PDFs</h3>
+                        <p>Drop the earlier and newer versions of any institutional policy document.</p>
+                    </div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-num">02</div>
+                    <div class="step-content">
+                        <h3>ML pipeline aligns clauses</h3>
+                        <p>Hybrid TF-IDF + embedding alignment matches every clause across versions.</p>
+                    </div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-num">03</div>
+                    <div class="step-content">
+                        <h3>Changes classified and cited</h3>
+                        <p>Each change is labelled, signal-explained, and cited back to its source page.</p>
+                    </div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-num">04</div>
+                    <div class="step-content">
+                        <h3>Review with clause navigator</h3>
+                        <p>Browse changes in the clause navigator, filter by type, and search by keyword.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="section-inner cta-inner">
+            <h2>Ready to compare your policies?</h2>
+            <p>Create a free account and run your first comparison in under a minute.</p>
+            <a href="/login" class="btn-hero-primary">Get Started Free</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+                    <rect width="32" height="32" rx="6" fill="#087F78"/>
+                    <path d="M9 16L14 21L23 11" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>POLICYX</span>
+            </div>
+            <p class="footer-copy">&copy; 2026 POLICYX. Built for JIG26_25 Hackathon.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

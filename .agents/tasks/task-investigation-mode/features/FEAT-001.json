@@ -1,0 +1,35 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Create investigation module (ml_pipeline/investigation/) with state machine, models, and Serper API search client. This feature implements the core investigation logic: state transitions (IDLE → COLLECTING_CONTEXT → EXTRACTING_METADATA → SEARCHING_SOURCES → RANKING_CANDIDATES → VERIFYING_PROVENANCE → AWAITING_CONFIRMATION → DOWNLOADING_DOCUMENT → COMPARING_POLICIES → COMPLETED/FAILED), InvestigationContext and CandidateDocument Pydantic models, and SerperSearchClient with free-tier Serper API integration (2500 free searches/month, $5/1000 thereafter). Serper chosen over Brave ($5/1k queries, no free tier) and DuckDuckGo (no official API) for best free tier + institutional document discovery via Google index.",
+  "status": "pending",
+  "steps": [
+    "1. Create ml_pipeline/investigation/ directory with __init__.py",
+    "2. Create ml_pipeline/investigation/models.py: Define InvestigationState enum (10 states as specified), InvestigationContext model (institution_name, affiliating_university, policy_title, department, academic_year, uploaded_policy_path, newer_policy_metadata dict), CandidateDocument model (url, title, institution_name, university_name, policy_title, version, source_domain, provenance_status enum [VERIFIED_PROVENANCE, STRONG_PROVENANCE, LIMITED_PROVENANCE, UNVERIFIED], provenance_signals dict, confidence_score float, downloaded_path optional str), InvestigationSession model (session_id, state, context, candidates list, selected_candidate optional, errors list, created_at, updated_at)",
+    "3. Create ml_pipeline/investigation/state_machine.py: Implement InvestigationStateMachine class with transition(current_state, event) -> new_state method, validate_transition(from_state, to_state) -> bool, and state transition graph following the spec (IDLE can only go to COLLECTING_CONTEXT, etc.)",
+    "4. Create ml_pipeline/investigation/search_client.py: Implement SerperSearchClient class with __init__(api_key: str), search_policies(institution: str, university: str, policy_title: str, limit: int = 10) -> list[dict] method using Serper API endpoint https://google.serper.dev/search with query construction: '{institution} {university} {policy_title} policy filetype:pdf', parse response JSON to extract organic results with title, link, snippet, parse domain from link",
+    "5. Create ml_pipeline/investigation/metadata_extractor.py: Implement extract_metadata_from_pdf(pdf_path: str) -> dict function using PyMuPDF to extract: title (from metadata or first-page heading), institution name (regex search for 'University', 'College', 'Institute' in first 3 pages), dates (YYYY-MM-DD or Month YYYY patterns), version indicators (v1, v2, 'revised', 'updated' + date), issuing authority (Dean, Registrar, etc.)",
+    "6. Create ml_pipeline/investigation/provenance_verifier.py: Implement ProvenanceVerifier class with verify(candidate: CandidateDocument, context: InvestigationContext, newer_policy_metadata: dict) -> tuple[ProvenanceStatus, dict] method. Scoring algorithm: domain_authority (5 pts official university domain like .edu, 3 pts official college domain, 1 pt other), institution_name_consistency (regex fuzzy match, 4 pts exact, 2 pts partial), university_consistency (4 pts), policy_title_consistency (rapidfuzz.fuzz.ratio >= 85: 5 pts, >= 70: 3 pts, >= 50: 1 pt), version_consistency (check candidate version < newer version, 3 pts), date_consistency (candidate date < newer date, 3 pts), issuing_authority_consistency (same department/office, 2 pts). Total score >= 20: VERIFIED_PROVENANCE, >= 15: STRONG_PROVENANCE, >= 8: LIMITED_PROVENANCE, < 8: UNVERIFIED. Return (status, signals_dict with breakdown)",
+    "7. Create ml_pipeline/investigation/ranker.py: Implement rank_candidates(candidates: list[CandidateDocument], context: InvestigationContext) -> list[CandidateDocument] function, sorting by: 1) provenance_status (VERIFIED > STRONG > LIMITED > UNVERIFIED), 2) confidence_score descending, 3) source_domain priority (official university > official institution > .edu > .gov > other)",
+    "8. Update ml_pipeline/config.py: Add serper_api_key: str = Field(default='') to PipelineConfig, add brave_api_key: str = Field(default='') for future extensibility, update load_config() to read SERPER_API_KEY and BRAVE_API_KEY from environment",
+    "9. Create ml_pipeline/investigation/tests/test_state_machine.py: Test all valid state transitions, test invalid transitions raise error, test state machine initialization",
+    "10. Create ml_pipeline/investigation/tests/test_provenance_verifier.py: Test scoring algorithm with mock CandidateDocument objects covering all signal types, verify VERIFIED/STRONG/LIMITED/UNVERIFIED thresholds"
+  ],
+  "acceptance_criteria": [
+    "ml_pipeline/investigation/ module exists with all 7 Python files",
+    "InvestigationState enum has exactly 10 states matching specification",
+    "InvestigationContext, CandidateDocument, InvestigationSession models are Pydantic v2 BaseModel subclasses",
+    "SerperSearchClient constructs correct query and parses Serper API response",
+    "ProvenanceVerifier scoring algorithm implements all 7 signal types with correct point values",
+    "Provenance status thresholds match specification (>=20 VERIFIED, >=15 STRONG, >=8 LIMITED, <8 UNVERIFIED)",
+    "PipelineConfig includes serper_api_key and brave_api_key fields",
+    "All investigation module code uses existing patterns (Pydantic models, type hints, docstrings)"
+  ],
+  "verification": [
+    "Run pytest ml_pipeline/investigation/tests/ -v from d:\\jig and confirm all new tests pass",
+    "Import investigation models in Python REPL: from ml_pipeline.investigation.models import InvestigationState, InvestigationContext, CandidateDocument; verify no import errors",
+    "Instantiate ProvenanceVerifier and test scoring with mock data; verify score calculation matches expected thresholds"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

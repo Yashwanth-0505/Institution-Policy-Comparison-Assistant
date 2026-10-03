@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>POLICYX — Institutional Policy Intelligence</title>
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=general-sans@500,600,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<a class="skip" href="#content">Skip to comparison</a>
+
+<!-- ============================================================================
+     HEADER — Premium Brand & Actions
+     ============================================================================ -->
+<header>
+<div class="header-content">
+<div class="brand">
+<svg class="mark" aria-label="POLICYX" viewBox="0 0 32 32" fill="none" width="32" height="32">
+<path d="M7 5.5h12a4 4 0 0 1 4 4v17H11a4 4 0 0 1-4-4v-17Z" stroke="currentColor" stroke-width="2"/>
+<path d="M12 11h7M12 16h7M12 21h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<circle cx="23.5" cy="9" r="5" fill="currentColor" opacity="0.3" stroke="currentColor" stroke-width="2"/>
+<path d="m27 13 3 3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>
+<span>POLICYX</span>
+</div>
+<div class="header-actions">
+<button id="demo" class="btn btn-secondary">Load demo</button>
+<button id="theme" class="icon-btn" aria-label="Switch color theme" title="Switch theme">◐</button>
+<a href="/logout" class="btn btn-secondary" style="font-size:13px;padding:6px 14px;text-decoration:none">Logout</a>
+</div>
+</div>
+</header>
+
+<!-- ============================================================================
+     MAIN CONTENT
+     ============================================================================ -->
+<main id="content">
+
+<!-- Intro Section -->
+<section class="intro">
+<div class="eyebrow">Policy Intelligence / Semantic Diff</div>
+<h1>See exactly what changed—and where.</h1>
+<p>Align clauses by structure and meaning, separate substantive edits from wording changes, and verify every result against both policy versions.</p>
+<div class="system-status">
+<span class="status-dot"></span>
+Local analysis engine • Embeddings ready • No cloud required
+</div>
+</section>
+
+<!-- Upload Workspace -->
+<section class="upload-workspace">
+<div class="upload-header">
+<h2>Compare Two Versions</h2>
+<p>Upload the earlier and newer policy documents to identify changes.</p>
+</div>
+
+<div class="upload-shell">
+<div class="upload-boxes">
+<label class="upload" id="uploadA">
+<input type="file" id="oldFile" accept=".pdf">
+<div class="upload-label">A</div>
+<div class="upload-label-text">Earlier Version</div>
+<span class="upload-icon">📄</span>
+<span class="upload-hint">Drop PDF or click to browse</span>
+<span id="oldName" class="file-name"></span>
+</label>
+
+<label class="upload" id="uploadB">
+<input type="file" id="newFile" accept=".pdf">
+<div class="upload-label">B</div>
+<div class="upload-label-text">Newer Version</div>
+<span class="upload-icon">📄</span>
+<span class="upload-hint">Drop PDF or click to browse</span>
+<span id="newName" class="file-name"></span>
+</label>
+</div>
+</div>
+
+<div class="action-stack">
+<button id="compare" class="btn btn-primary">Compare Policies</button>
+<button id="demo-alt" class="btn btn-secondary">Or Load Sample</button>
+<button id="clear" class="btn btn-ghost">Clear</button>
+</div>
+</section>
+
+<div id="notice" class="notice" role="status" aria-live="polite"></div>
+
+<!-- ============================================================================
+     INVESTIGATION MODE — Missing Previous Policy Dialog
+     ============================================================================ -->
+<div id="investigation-overlay" class="investigation-overlay hidden">
+  <div class="investigation-dialog">
+    
+    <!-- Step 1: Two Questions -->
+    <div id="inv-step-questions" class="inv-step">
+      <div class="inv-header">
+        <h2>Missing Previous Policy</h2>
+        <p>You only uploaded the newer policy. POLICYX can help locate the previous version from authoritative sources.</p>
+      </div>
+
+      <div class="inv-body">
+        <div class="inv-form-group">
+          <label for="inv-institution">Institution Name *</label>
+          <input type="text" id="inv-institution" placeholder="e.g., ABC College" required>
+        </div>
+
+        <div class="inv-form-group">
+          <label for="inv-university">Affiliating University *</label>
+          <input type="text" id="inv-university" placeholder="e.g., XYZ University" required>
+        </div>
+
+        <div class="inv-form-group">
+          <label for="inv-policy-title">Policy Title *</label>
+          <input type="text" id="inv-policy-title" placeholder="e.g., Academic Regulations" required>
+        </div>
+
+        <div class="inv-form-row">
+          <div class="inv-form-group">
+            <label for="inv-department">Department <span class="optional">(optional)</span></label>
+            <input type="text" id="inv-department" placeholder="e.g., Computer Science">
+          </div>
+
+          <div class="inv-form-group">
+            <label for="inv-year">Academic Year <span class="optional">(optional)</span></label>
+            <input type="text" id="inv-year" placeholder="e.g., 2024-25">
+          </div>
+        </div>
+      </div>
+
+      <div class="inv-footer">
+        <button id="inv-cancel-btn" class="btn btn-ghost">Cancel</button>
+        <button id="inv-search-btn" class="btn btn-primary">Search for Previous Policy</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Progress -->
+    <div id="inv-step-progress" class="inv-step hidden">
+      <div class="inv-header">
+        <h2>Searching...</h2>
+        <p id="inv-progress-status">Searching authoritative sources for the previous version.</p>
+      </div>
+
+      <div class="inv-body">
+        <div class="inv-progress-steps">
+          <div class="inv-progress-step" data-state="idle">
+            <div class="inv-progress-icon">1</div>
+            <div class="inv-progress-label">Extract Metadata</div>
+          </div>
+          <div class="inv-progress-step" data-state="idle">
+            <div class="inv-progress-icon">2</div>
+            <div class="inv-progress-label">Search Sources</div>
+          </div>
+          <div class="inv-progress-step" data-state="idle">
+            <div class="inv-progress-icon">3</div>
+            <div class="inv-progress-label">Verify Provenance</div>
+          </div>
+          <div class="inv-progress-step" data-state="idle">
+            <div class="inv-progress-icon">4</div>
+            <div class="inv-progress-label">Rank Candidates</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Candidate Selection -->
+    <div id="inv-step-candidates" class="inv-step hidden">
+      <div class="inv-header">
+        <h2>Previous Policy Found</h2>
+        <p>Select the candidate document to use for comparison.</p>
+      </div>
+
+      <div class="inv-body">
+        <div id="inv-candidates-list" class="inv-candidates-list">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <div class="inv-footer">
+        <button id="inv-back-btn" class="btn btn-ghost">Back</button>
+        <button id="inv-manual-btn" class="btn btn-secondary">Upload Manually</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Final Progress (Download + Compare) -->
+    <div id="inv-step-comparing" class="inv-step hidden">
+      <div class="inv-header">
+        <h2>Running Comparison</h2>
+        <p id="inv-compare-status">Downloading candidate and running ML pipeline...</p>
+      </div>
+
+      <div class="inv-body">
+        <div class="inv-spinner-large"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Stats Section -->
+<section id="stats" class="stats" aria-label="Comparison statistics"></section>
+
+<!-- Toolbar -->
+<section id="toolbar" class="toolbar hidden">
+<div id="filters" class="filters" aria-label="Filter changes"></div>
+<input id="search" class="search" type="search" placeholder="Search clauses..." aria-label="Search changes">
+</section>
+
+<!-- Comparison Results -->
+<section id="results-wrapper" class="comparison-section hidden">
+<div class="comparison-header">
+<div class="comparison-title">Policy Comparison</div>
+<div class="comparison-meta">
+<span id="oldHead">Earlier policy</span> → <span id="newHead">Newer policy</span>
+</div>
+</div>
+
+<div class="comparison-workspace">
+<!-- Clause Navigator Sidebar -->
+<aside class="clause-navigator">
+<div class="navigator-header">
+<div class="navigator-title">Clauses</div>
+<div class="navigator-count"><span id="clause-count">0</span> items</div>
+</div>
+<div id="clause-list" class="clause-list" role="listbox" aria-label="Clause navigation">
+<!-- Populated by JS -->
+</div>
+</aside>
+
+<!-- Main Comparison View -->
+<main class="comparison-main">
+<div id="clause-detail" class="clause-detail">
+<div class="empty-state">
+<div class="empty-state-graphic">📄</div>
+<b>Select a clause</b>
+<p>Choose a clause from the list to view detailed comparison.</p>
+</div>
+</div>
+</main>
+</div>
+</section>
+
+<!-- Evaluation Section -->
+<section class="eval">
+<h2>Model Evaluation</h2>
+<p>Prototype evaluation set on 30 hand-labelled institutional policy pairs.</p>
+<div id="evalResult" class="eval-result"></div>
+<label class="btn btn-secondary">
+Evaluate labels
+<input id="evalFile" type="file" accept=".csv" hidden>
+</label>
+</section>
+
+</main>
+
+<!-- ============================================================================
+     JAVASCRIPT — Premium Frontend Logic
+     ============================================================================ -->
+<script>
+let data = null, active = 'all', selectedClauseIndex = null;
+const $ = s => document.querySelector(s);
+const esc = s => (s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function setNotice(msg, type = 'ok') {
+  const n = $('#notice');
+  n.textContent = msg;
+  n.className = 'notice show ' + type;
+  if (type !== 'loading') setTimeout(() => n.classList.remove('show'), 4000);
+}
+
+function showStats() {
+  const labels = [['substantive','Substantive'],['wording_only','Wording only'],['added','Added'],['removed','Removed'],['unchanged','Unchanged']];
+  $('#stats').innerHTML = labels.map(([k,l]) => `<div class="stat"><div class="stat-value">${data?.stats?.[k]||0}</div><div class="stat-label">${l}</div></div>`).join('');
+  $('#stats').classList.remove('hidden');
+}
+
+function showFilters() {
+  const fs = [['all','All'],['substantive','Substantive'],['wording_only','Wording only'],['added','Added'],['removed','Removed'],['unchanged','Unchanged']];
+  $('#filters').innerHTML = fs.map(([k,l]) => `<button class="chip ${active===k?'active':''}" data-filter="${k}">${l}</button>`).join('');
+  document.querySelectorAll('[data-filter]').forEach(b => {b.onclick = () => {active = b.dataset.filter; showFilters(); renderNavigator();}});
+}
+
+function renderNavigator() {
+  if (!data) return;
+  let rows = data.rows;
+  if (active !== 'all') rows = rows.filter(r => r.change_type === active);
+  const q = $('#search').value.toLowerCase();
+  if (q) rows = rows.filter(r => `${r.heading_a} ${r.heading_b} ${r.text_a} ${r.text_b}`.toLowerCase().includes(q));
+  
+  $('#clause-count').textContent = rows.length;
+  
+  $('#clause-list').innerHTML = rows.map((r, i) => {
+    const type = r.change_type === 'wording_only' ? 'wording_only' : r.change_type;
+    const isSelected = selectedClauseIndex === i;
+    const badge_label = type === 'wording_only' ? 'WO' : type[0].toUpperCase();
+    return `<div class="clause-item ${isSelected ? 'active' : ''}" data-index="${i}" role="option" aria-selected="${isSelected}">
+      <div class="clause-item-header">
+        <span class="clause-badge ${type}">${badge_label}</span>
+        <span class="clause-title">${esc(r.heading_a || 'Unnamed')}</span>
+      </div>
+      <div class="clause-meta-nav">${r.match_score ? `Match ${r.match_score}%` : ''}</div>
+    </div>`;
+  }).join('');
+  
+  document.querySelectorAll('.clause-item').forEach((el, i) => {
+    el.onclick = () => selectClause(i);
+  });
+}
+
+function selectClause(index) {
+  let rows = data.rows;
+  if (active !== 'all') rows = rows.filter(r => r.change_type === active);
+  const q = $('#search').value.toLowerCase();
+  if (q) rows = rows.filter(r => `${r.heading_a} ${r.heading_b} ${r.text_a} ${r.text_b}`.toLowerCase().includes(q));
+  
+  const row = rows[index];
+  if (!row) return;
+  
+  selectedClauseIndex = index;
+  renderNavigator();
+  renderClauseDetail(row);
+}
+
+function renderClauseDetail(r) {
+  const type = r.change_type === 'wording_only' ? 'wording_only' : r.change_type;
+  const badge_label = type === 'wording_only' ? 'Wording only' : (type.charAt(0).toUpperCase() + type.slice(1));
+  const score_html = r.match_score ? `<div class="detail-meta">Match score: ${r.match_score}%</div>` : '';
+  
+  let detailHtml = `<div class="clause-detail-content">
+    <div class="detail-header">
+      <h2>${esc(r.heading_a || 'Unnamed Clause')}</h2>
+      <span class="badge ${type}">${badge_label}</span>
+    </div>
+    ${score_html}
+    ${r.summary ? `<div class="detail-summary"><strong>Change:</strong> ${esc(r.summary)}</div>` : ''}
+  `;
+  
+  // Two-column view for matched pairs, single view for added/removed
+  if (r.text_a && r.text_b) {
+    detailHtml += `
+    <div class="detail-comparison">
+      <div class="detail-pane">
+        <div class="detail-pane-header">Earlier Policy</div>
+        <div class="detail-pane-meta">${esc(r.doc_a || 'Version A')} • Page ${r.page_a}</div>
+        <div class="detail-clause-text">${esc(r.text_a)}</div>
+      </div>
+      <div class="detail-pane">
+        <div class="detail-pane-header">Newer Policy</div>
+        <div class="detail-pane-meta">${esc(r.doc_b || 'Version B')} • Page ${r.page_b || 'N/A'}</div>
+        <div class="detail-clause-text">${esc(r.text_b)}</div>
+      </div>
+    </div>
+    `;
+  } else if (r.text_a && !r.text_b) {
+    detailHtml += `
+    <div class="detail-removed">
+      <div class="detail-pane-header">Removed from Newer Version</div>
+      <div class="detail-pane-meta">${esc(r.doc_a || 'Version A')} • Page ${r.page_a}</div>
+      <div class="detail-clause-text">${esc(r.text_a)}</div>
+    </div>
+    `;
+  } else if (!r.text_a && r.text_b) {
+    detailHtml += `
+    <div class="detail-added">
+      <div class="detail-pane-header">Added in Newer Version</div>
+      <div class="detail-pane-meta">${esc(r.doc_b || 'Version B')} • Page ${r.page_b || 'N/A'}</div>
+      <div class="detail-clause-text">${esc(r.text_b)}</div>
+    </div>
+    `;
+  }
+  
+  if (r.signals?.length) {
+    detailHtml += `<div class="detail-signals">
+      <div class="signals-title">Detected Signals</div>
+      ${r.signals.map(s => `<div class="signal-item"><span class="signal-type">${esc(s.type)}</span>: ${esc(s.desc)}</div>`).join('')}
+    </div>`;
+  }
+  
+  detailHtml += `</div>`;
+  
+  $('#clause-detail').innerHTML = detailHtml;
+}
+
+function load(d) {
+  data = d;
+  active = 'all';
+  selectedClauseIndex = null;
+  $('#oldHead').textContent = d.stats.doc_a_name;
+  $('#newHead').textContent = d.stats.doc_b_name;
+  $('#results-wrapper').classList.remove('hidden');
+  $('#toolbar').classList.remove('hidden');
+  showStats();
+  showFilters();
+  renderNavigator();
+  if (data.rows.length > 0) selectClause(0);
+  setNotice(`Compared: ${d.stats.doc_a_name} vs ${d.stats.doc_b_name}`, 'ok');
+  document.querySelector('html').scrollIntoView({behavior: 'smooth'});
+}
+
+$('#oldFile').onchange = e => $('#oldName').textContent = e.target.files[0]?.name || '';
+$('#newFile').onchange = e => $('#newName').textContent = e.target.files[0]?.name || '';
+
+$('#clear').onclick = () => {
+  data = null;
+  selectedClauseIndex = null;
+  $('#oldFile').value = $('#newFile').value = '';
+  $('#oldName').textContent = $('#newName').textContent = '';
+  $('#stats').classList.add('hidden');
+  $('#toolbar').classList.add('hidden');
+  $('#results-wrapper').classList.add('hidden');
+  setNotice('', 'ok');
+};
+
+$('#compare').onclick = async () => {
+  const a = $('#oldFile').files[0], b = $('#newFile').files[0];
+  if (!a || !b) return setNotice('Select both policy versions first.', 'error');
+  const btn = $('#compare');
+  btn.disabled = true;
+  btn.textContent = 'Comparing…';
+  setNotice('Analyzing policies...', 'loading');
+  try {
+    const f = new FormData();
+    f.append('policy_a', a);
+    f.append('policy_b', b);
+    const r = await fetch('/compare', {method:'POST', body:f});
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Comparison failed');
+    load(d);
+  } catch(e) {
+    setNotice('Error: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Compare Policies';
+  }
+};
+
+$('#demo').onclick = $('#demo-alt').onclick = async () => {
+  const btn = $('#demo');
+  btn.disabled = true;
+  btn.textContent = 'Loading…';
+  setNotice('Loading sample policies...', 'loading');
+  try {
+    const r = await fetch('/sample');
+    const d = await r.json();
+    if (!r.ok) throw new Error('Failed to load');
+    load(d);
+  } catch(e) {
+    setNotice('Error: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Load demo';
+  }
+};
+
+$('#search').oninput = renderNavigator;
+
+let theme = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+document.documentElement.dataset.theme = theme;
+$('#theme').onclick = () => {
+  theme = theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = theme;
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INVESTIGATION MODE
+// ═══════════════════════════════════════════════════════════════════════════
+
+let invSessionId = null;
+let invCandidates = [];
+
+// Show investigation dialog when user clicks Compare with only one PDF uploaded
+document.getElementById('compare').addEventListener('click', async () => {
+  const oldFile = document.getElementById('oldFile').files[0];
+  const newFile = document.getElementById('newFile').files[0];
+
+  // Normal two-PDF flow
+  if (oldFile && newFile) {
+    await runComparison();
+    return;
+  }
+
+  // Investigation mode — only newFile
+  if (!oldFile && newFile) {
+    showInvestigationDialog(newFile);
+    return;
+  }
+
+  // Error: no files or only oldFile
+  if (!oldFile && !newFile) {
+    showNotice('Please upload at least the newer policy PDF.', 'error');
+    return;
+  }
+
+  if (oldFile && !newFile) {
+    showNotice('Please upload the newer policy as well, or use investigation mode.', 'error');
+    return;
+  }
+});
+
+function showInvestigationDialog(newerFile) {
+  invSessionId = null;
+  invCandidates = [];
+
+  // Upload the newer file to start investigation session
+  const fd = new FormData();
+  fd.append('newer_policy', newerFile);
+
+  fetch('/investigate/start', { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(data => {
+      if (data.ok) {
+        invSessionId = data.session_id;
+        document.getElementById('investigation-overlay').classList.remove('hidden');
+        showInvStep('questions');
+      } else {
+        showNotice(data.error || 'Failed to start investigation.', 'error');
+      }
+    })
+    .catch(() => showNotice('Network error starting investigation.', 'error'));
+}
+
+function showInvStep(step) {
+  document.querySelectorAll('.inv-step').forEach(s => s.classList.add('hidden'));
+  if (step === 'questions')  document.getElementById('inv-step-questions').classList.remove('hidden');
+  if (step === 'progress')   document.getElementById('inv-step-progress').classList.remove('hidden');
+  if (step === 'candidates') document.getElementById('inv-step-candidates').classList.remove('hidden');
+  if (step === 'comparing')  document.getElementById('inv-step-comparing').classList.remove('hidden');
+}
+
+function closeInvestigation() {
+  if (invSessionId) {
+    fetch('/investigate/cancel', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ session_id: invSessionId }),
+    });
+  }
+  document.getElementById('investigation-overlay').classList.add('hidden');
+  invSessionId = null;
+  invCandidates = [];
+}
+
+document.getElementById('inv-cancel-btn').addEventListener('click', closeInvestigation);
+document.getElementById('inv-manual-btn').addEventListener('click', closeInvestigation);
+
+document.getElementById('inv-search-btn').addEventListener('click', async () => {
+  const institution = document.getElementById('inv-institution').value.trim();
+  const university  = document.getElementById('inv-university').value.trim();
+  const policyTitle = document.getElementById('inv-policy-title').value.trim();
+  const department  = document.getElementById('inv-department').value.trim();
+  const year        = document.getElementById('inv-year').value.trim();
+
+  if (!institution || !university || !policyTitle) {
+    alert('Institution, University, and Policy Title are required.');
+    return;
+  }
+
+  showInvStep('progress');
+  updateInvProgress(1, 'active');
+
+  try {
+    const res = await fetch('/investigate/context', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_id: invSessionId,
+        institution_name: institution,
+        affiliating_university: university,
+        policy_title: policyTitle,
+        department,
+        academic_year: year,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      showNotice(data.error || 'Search failed.', 'error');
+      closeInvestigation();
+      return;
+    }
+
+    // All steps complete
+    updateInvProgress(1, 'done');
+    updateInvProgress(2, 'done');
+    updateInvProgress(3, 'done');
+    updateInvProgress(4, 'done');
+
+    invCandidates = data.candidates || [];
+
+    if (invCandidates.length === 0) {
+      showNotice('No candidates found. Please upload the previous policy manually.', 'warning');
+      closeInvestigation();
+      return;
+    }
+
+    // Show candidates
+    showInvStep('candidates');
+    renderCandidates(invCandidates);
+
+  } catch (err) {
+    showNotice('Network error during search.', 'error');
+    closeInvestigation();
+  }
+});
+
+function updateInvProgress(stepNum, state) {
+  const steps = document.querySelectorAll('.inv-progress-step');
+  if (steps[stepNum - 1]) {
+    steps[stepNum - 1].dataset.state = state;
+  }
+}
+
+function renderCandidates(candidates) {
+  const list = document.getElementById('inv-candidates-list');
+  list.innerHTML = '';
+
+  candidates.forEach((c, idx) => {
+    const card = document.createElement('div');
+    card.className = 'inv-candidate-card';
+    card.innerHTML = `
+      <div class="inv-candidate-header">
+        <div class="inv-candidate-title">${escapeHtml(c.document_title || 'Untitled')}</div>
+        <span class="inv-badge inv-badge-${provenanceBadgeClass(c.provenance_status)}">${c.provenance_status || 'UNVERIFIED'}</span>
+      </div>
+      <div class="inv-candidate-body">
+        <div class="inv-candidate-row"><strong>Source:</strong> <a href="${escapeHtml(c.source_url)}" target="_blank" rel="noopener">${escapeHtml(c.source_domain)}</a></div>
+        <div class="inv-candidate-row"><strong>Type:</strong> ${escapeHtml(c.source_type)}</div>
+        ${c.source_verification && c.source_verification.signals ? `
+          <details class="inv-candidate-signals">
+            <summary>Provenance Signals (${c.source_verification.signals.length})</summary>
+            <ul>
+              ${c.source_verification.signals.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
+            </ul>
+          </details>
+        ` : ''}
+      </div>
+      <div class="inv-candidate-footer">
+        <button class="btn btn-primary btn-sm inv-use-btn" data-idx="${idx}">Use This Policy</button>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+
+  // Attach click handlers
+  document.querySelectorAll('.inv-use-btn').forEach(btn => {
+    btn.addEventListener('click', () => confirmCandidate(parseInt(btn.dataset.idx)));
+  });
+}
+
+function provenanceBadgeClass(status) {
+  if (status === 'VERIFIED_PROVENANCE') return 'verified';
+  if (status === 'STRONG_PROVENANCE')   return 'strong';
+  if (status === 'LIMITED_PROVENANCE')  return 'limited';
+  return 'unverified';
+}
+
+async function confirmCandidate(idx) {
+  showInvStep('comparing');
+
+  try {
+    const res = await fetch('/investigate/confirm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_id: invSessionId,
+        candidate_index: idx,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      showNotice(data.error || 'Comparison failed.', 'error');
+      closeInvestigation();
+      return;
+    }
+
+    // Success — display results
+    closeInvestigation();
+    displayResults(data.stats, data.rows);
+    showNotice('Comparison complete! Previous policy discovered and verified.', 'success');
+
+  } catch (err) {
+    showNotice('Network error during comparison.', 'error');
+    closeInvestigation();
+  }
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+</script>
+
+</body>
+</html>

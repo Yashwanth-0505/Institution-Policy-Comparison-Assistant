@@ -1,0 +1,272 @@
+[
+  {
+    "id": "eval_001",
+    "category": "identical",
+    "clause_a_text": "Students must maintain a minimum attendance of 75% in all theory classes and 85% in practical/laboratory sessions to be eligible to appear in the end-semester examination.",
+    "clause_b_text": "Students must maintain a minimum attendance of 75% in all theory classes and 85% in practical/laboratory sessions to be eligible to appear in the end-semester examination.",
+    "expected_match": true,
+    "expected_change_type": "unchanged",
+    "notes": "Attendance Policy — identical clause, no change."
+  },
+  {
+    "id": "eval_002",
+    "category": "identical",
+    "clause_a_text": "A student who has been awarded an Improvement of Performance (IOP) grade must re-appear in the examination conducted by the institution in the immediately following semester.",
+    "clause_b_text": "A student who has been awarded an Improvement of Performance (IOP) grade must re-appear in the examination conducted by the institution in the immediately following semester.",
+    "expected_match": true,
+    "expected_change_type": "unchanged",
+    "notes": "Academic Examination Policy — identical clause."
+  },
+  {
+    "id": "eval_003",
+    "category": "identical",
+    "clause_a_text": "All library books must be returned before the commencement of end-semester examinations. Failure to return books will result in a fine of Rs. 2 per day per book.",
+    "clause_b_text": "All library books must be returned before the commencement of end-semester examinations. Failure to return books will result in a fine of Rs. 2 per day per book.",
+    "expected_match": true,
+    "expected_change_type": "unchanged",
+    "notes": "Library Policy — identical clause."
+  },
+  {
+    "id": "eval_004",
+    "category": "paraphrased_wording_only",
+    "clause_a_text": "Students who fail to meet the minimum attendance requirement will not be permitted to appear in the end-semester examination and will be awarded a detained status.",
+    "clause_b_text": "Students who fail to achieve the minimum attendance requirement will not be eligible to appear in the end-semester examination and will be given a detained status.",
+    "expected_match": true,
+    "expected_change_type": "wording_only",
+    "notes": "Attendance Policy — close paraphrase, same detention rule. High similarity, no modal/negation change."
+  },
+  {
+    "id": "eval_005",
+    "category": "paraphrased_wording_only",
+    "clause_a_text": "Faculty members are required to submit lesson plans for the entire semester to the Head of Department before the commencement of classes.",
+    "clause_b_text": "All teaching staff are required to submit their semester lesson plans to the Head of Department prior to the start of classes.",
+    "expected_match": true,
+    "expected_change_type": "wording_only",
+    "notes": "Lecturer Policy — paraphrase, same obligation. Both use 'are required to'."
+  },
+  {
+    "id": "eval_006",
+    "category": "paraphrased_wording_only",
+    "clause_a_text": "Hostel residents must vacate their rooms within 48 hours of the completion of their final examination of the academic year.",
+    "clause_b_text": "Students residing in the hostel must vacate their accommodation within 48 hours after completing their final examination for the academic year.",
+    "expected_match": true,
+    "expected_change_type": "wording_only",
+    "notes": "Hostel Policy — paraphrase, same 48-hour vacating rule. Both use 'must'."
+  },
+  {
+    "id": "eval_007",
+    "category": "numeric_change",
+    "clause_a_text": "A student must secure a minimum of 40% marks in the end-semester examination to pass the subject.",
+    "clause_b_text": "A student must secure a minimum of 50% marks in the end-semester examination to pass the subject.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Academic Examination Policy — pass mark raised from 40% to 50%. Substantive."
+  },
+  {
+    "id": "eval_008",
+    "category": "numeric_change",
+    "clause_a_text": "Students are permitted to borrow a maximum of 3 books at a time from the library for a loan period of 14 days.",
+    "clause_b_text": "Students are permitted to borrow a maximum of 5 books at a time from the library for a loan period of 14 days.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Library Policy — book borrowing limit increased from 3 to 5. Substantive."
+  },
+  {
+    "id": "eval_009",
+    "category": "numeric_change",
+    "clause_a_text": "The placement cell will conduct a minimum of 2 pre-placement training sessions per semester for final-year students.",
+    "clause_b_text": "The placement cell will conduct a minimum of 4 pre-placement training sessions per semester for final-year students.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Placement Policy — training sessions doubled from 2 to 4 per semester. Substantive."
+  },
+  {
+    "id": "eval_010",
+    "category": "negation_change",
+    "clause_a_text": "Students appearing for back-paper examinations are permitted to attend regular classes during the examination period.",
+    "clause_b_text": "Students appearing for back-paper examinations are not permitted to attend regular classes during the examination period.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Academic Examination Policy — 'permitted' to 'not permitted'. Complete reversal. Substantive."
+  },
+  {
+    "id": "eval_011",
+    "category": "negation_change",
+    "clause_a_text": "Mobile phones are allowed inside the library premises provided they are kept on silent mode.",
+    "clause_b_text": "Mobile phones are not allowed inside the library premises under any circumstances.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Library Policy — conditional permission reversed to outright prohibition. Substantive."
+  },
+  {
+    "id": "eval_012",
+    "category": "negation_change",
+    "clause_a_text": "Hostel residents may entertain guests in common areas between 9:00 AM and 6:00 PM with prior intimation to the warden.",
+    "clause_b_text": "Hostel residents may not entertain outside guests in any area of the hostel premises without written permission from the Chief Warden.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Hostel Policy — guest permission policy reversed. Substantive."
+  },
+  {
+    "id": "eval_013",
+    "category": "modal_obligation_change",
+    "clause_a_text": "Faculty members may publish research articles in journals indexed in Scopus or Web of Science to meet annual research output requirements.",
+    "clause_b_text": "Faculty members must publish at least one research article per year in journals indexed in Scopus or Web of Science.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Lecturer Policy — 'may publish' (optional) becomes 'must publish' (mandatory). Substantive."
+  },
+  {
+    "id": "eval_014",
+    "category": "modal_obligation_change",
+    "clause_a_text": "The Disciplinary Committee must issue a show-cause notice to the accused student before initiating formal disciplinary proceedings.",
+    "clause_b_text": "The Disciplinary Committee should issue a show-cause notice to the accused student before initiating formal disciplinary proceedings.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Disciplinary Policy — mandatory safeguard ('must') weakened to recommendation ('should'). Substantive."
+  },
+  {
+    "id": "eval_015",
+    "category": "modal_obligation_change",
+    "clause_a_text": "Students should report any ragging incident to the Anti-Ragging Committee within 24 hours of the occurrence.",
+    "clause_b_text": "Students must report any ragging incident to the Anti-Ragging Committee within 24 hours of the occurrence.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Disciplinary Policy — 'should report' becomes 'must report'. Obligation strengthened. Substantive."
+  },
+  {
+    "id": "eval_016",
+    "category": "date_deadline_change",
+    "clause_a_text": "Students wishing to apply for placement activities must register with the placement cell by 31st August of their final year.",
+    "clause_b_text": "Students wishing to apply for placement activities must register with the placement cell by 15th July of their final year.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Placement Policy — registration deadline moved earlier. Substantive."
+  },
+  {
+    "id": "eval_017",
+    "category": "date_deadline_change",
+    "clause_a_text": "Annual fee payment must be completed by 30th June of each academic year to avoid late payment penalties.",
+    "clause_b_text": "Annual fee payment must be completed by 31st May of each academic year to avoid late payment penalties.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Financial & Administrative Policy — fee deadline brought forward by one month. Substantive."
+  },
+  {
+    "id": "eval_018",
+    "category": "date_deadline_change",
+    "clause_a_text": "Faculty must submit their annual self-appraisal report to the administration by 31st March each year.",
+    "clause_b_text": "Faculty must submit their annual self-appraisal report to the administration by 28th February each year.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Lecturer Policy — appraisal submission deadline moved one month earlier. Substantive."
+  },
+  {
+    "id": "eval_019",
+    "category": "added_clause",
+    "clause_a_text": "",
+    "clause_b_text": "Students who secure placement offers from companies visiting the campus must inform the placement cell in writing within 48 hours of receiving the offer letter.",
+    "expected_match": false,
+    "expected_change_type": "added",
+    "notes": "Placement Policy — new clause added requiring offer letter notification."
+  },
+  {
+    "id": "eval_020",
+    "category": "added_clause",
+    "clause_a_text": "",
+    "clause_b_text": "The institution shall establish an Internal Quality Assurance Cell (IQAC) to monitor and evaluate the academic and administrative performance of all departments on a semester basis.",
+    "expected_match": false,
+    "expected_change_type": "added",
+    "notes": "Financial & Administrative Policy — new IQAC oversight clause added."
+  },
+  {
+    "id": "eval_021",
+    "category": "added_clause",
+    "clause_a_text": "",
+    "clause_b_text": "Students found using unfair means during any examination, including possession of unauthorised materials or electronic devices, will be awarded zero marks for the entire examination and referred to the Disciplinary Committee.",
+    "expected_match": false,
+    "expected_change_type": "added",
+    "notes": "Academic Examination Policy — new unfair means penalty clause added."
+  },
+  {
+    "id": "eval_022",
+    "category": "removed_clause",
+    "clause_a_text": "Students with a cumulative attendance below 65% in any subject may apply for a medical condonation of attendance subject to submission of a valid medical certificate from a registered medical practitioner.",
+    "clause_b_text": "",
+    "expected_match": false,
+    "expected_change_type": "removed",
+    "notes": "Attendance Policy — medical condonation provision removed."
+  },
+  {
+    "id": "eval_023",
+    "category": "removed_clause",
+    "clause_a_text": "The institution will provide a merit scholarship of Rs. 5000 per semester to students who rank in the top 5% of their batch in the end-semester examinations.",
+    "clause_b_text": "",
+    "expected_match": false,
+    "expected_change_type": "removed",
+    "notes": "Financial & Administrative Policy — merit scholarship provision removed."
+  },
+  {
+    "id": "eval_024",
+    "category": "removed_clause",
+    "clause_a_text": "The library will provide photocopying and printing services at subsidised rates to all registered students and faculty members.",
+    "clause_b_text": "",
+    "expected_match": false,
+    "expected_change_type": "removed",
+    "notes": "Library Policy — subsidised printing service clause removed."
+  },
+  {
+    "id": "eval_025",
+    "category": "renumbered_same_meaning",
+    "clause_a_text": "3.1 Hostel curfew timings are 10:00 PM for all residents. Residents returning after curfew must sign the late entry register maintained at the security gate.",
+    "clause_b_text": "4.1 Hostel curfew timings are 10:00 PM for all residents. Residents returning after curfew must sign the late entry register maintained at the security gate.",
+    "expected_match": true,
+    "expected_change_type": "wording_only",
+    "notes": "Hostel Policy — section renumbered from 3.1 to 4.1, content identical."
+  },
+  {
+    "id": "eval_026",
+    "category": "renumbered_same_meaning",
+    "clause_a_text": "2. The Disciplinary Committee shall comprise the Principal, two senior faculty members nominated by the Academic Council, and one student representative.",
+    "clause_b_text": "3. The Disciplinary Committee shall comprise the Principal, two senior faculty members nominated by the Academic Council, and one student representative.",
+    "expected_match": true,
+    "expected_change_type": "wording_only",
+    "notes": "Disciplinary Policy — clause renumbered from 2 to 3, content unchanged."
+  },
+  {
+    "id": "eval_027",
+    "category": "renumbered_same_meaning",
+    "clause_a_text": "Section 5: All financial transactions above Rs. 1,00,000 must be approved by both the Finance Officer and the Principal before disbursement.",
+    "clause_b_text": "Section 6: All financial transactions above Rs. 1,00,000 must be approved by both the Finance Officer and the Principal before disbursement.",
+    "expected_match": true,
+    "expected_change_type": "wording_only",
+    "notes": "Financial & Administrative Policy — section renumbered 5 to 6, content unchanged."
+  },
+  {
+    "id": "eval_028",
+    "category": "uncertain_ambiguous",
+    "clause_a_text": "The placement cell will assess student eligibility for campus recruitment on a case-by-case basis considering academic performance, backlogs, and soft skills.",
+    "clause_b_text": "Student eligibility for campus recruitment shall be determined according to the placement eligibility criteria published by the placement cell at the beginning of each academic year.",
+    "expected_match": true,
+    "expected_change_type": "uncertain",
+    "notes": "Placement Policy — both describe eligibility determination but through different mechanisms. May be substantive or merely restructured."
+  },
+  {
+    "id": "eval_029",
+    "category": "uncertain_ambiguous",
+    "clause_a_text": "The institution will take reasonable steps to ensure the safety and security of all hostel residents at all times.",
+    "clause_b_text": "The institution is committed to providing a safe and secure hostel environment conducive to academic excellence and personal well-being.",
+    "expected_match": true,
+    "expected_change_type": "uncertain",
+    "notes": "Hostel Policy — first is an obligation clause; second is an aspiration statement. May be substantive weakening."
+  },
+  {
+    "id": "eval_030",
+    "category": "uncertain_ambiguous",
+    "clause_a_text": "Faculty grievances related to workload, promotion, or service conditions shall be addressed by the Grievance Redressal Committee within 30 working days of receipt.",
+    "clause_b_text": "Faculty members may raise grievances through the established institutional grievance mechanism as per applicable service rules.",
+    "expected_match": true,
+    "expected_change_type": "uncertain",
+    "notes": "Lecturer Policy — specific timeline and committee removed, replaced with vague reference. Ambiguous substantive change."
+  }
+]

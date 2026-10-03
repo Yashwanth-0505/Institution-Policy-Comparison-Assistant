@@ -1,0 +1,38 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Add investigation Flask endpoints to frontend/app.py. This feature creates the backend API for the investigation workflow: 6 new endpoints handle session initialization, context collection, metadata extraction, search execution, candidate ranking/verification, user confirmation, and document download. All endpoints preserve the existing /compare and /sample endpoints without modification.",
+  "status": "pending",
+  "steps": [
+    "1. Add import statements to frontend/app.py: from ml_pipeline.investigation.models import InvestigationSession, InvestigationState, InvestigationContext, CandidateDocument; from ml_pipeline.investigation.state_machine import InvestigationStateMachine; from ml_pipeline.investigation.search_client import SerperSearchClient; from ml_pipeline.investigation.metadata_extractor import extract_metadata_from_pdf; from ml_pipeline.investigation.provenance_verifier import ProvenanceVerifier; from ml_pipeline.investigation.ranker import rank_candidates; import uuid; from datetime import datetime",
+    "2. Add global in-memory session store after app initialization: investigation_sessions: dict[str, InvestigationSession] = {}  # session_id -> InvestigationSession. Add comment: 'Production would use Redis or database; in-memory suffices for demo'",
+    "3. Add @app.route('/investigate/start', methods=['POST']) endpoint: Accepts multipart/form-data with 'newer_policy' file. Saves uploaded file to temp location. Extracts metadata using extract_metadata_from_pdf(). Creates InvestigationSession with unique session_id (uuid4), state=COLLECTING_CONTEXT, context with uploaded_policy_path and newer_policy_metadata. Stores session in investigation_sessions dict. Returns JSON: {session_id, state, message: 'Investigation started. Please provide institution details.'}",
+    "4. Add @app.route('/investigate/context', methods=['POST']) endpoint: Accepts JSON: {session_id, institution_name, affiliating_university, policy_title, department?, academic_year?}. Validates session exists and state is COLLECTING_CONTEXT. Updates session.context with provided fields. Transitions state to EXTRACTING_METADATA (no-op, metadata already extracted). Transitions state to SEARCHING_SOURCES. Returns JSON: {session_id, state, message: 'Context received. Searching for previous policy versions...'}",
+    "5. Add @app.route('/investigate/search', methods=['POST']) endpoint: Accepts JSON: {session_id}. Validates session exists and state is SEARCHING_SOURCES. Loads config and reads SERPER_API_KEY. If key missing, returns error 400: 'SERPER_API_KEY not configured'. Initializes SerperSearchClient(api_key). Calls search_policies(context.institution_name, context.affiliating_university, context.policy_title). Wraps search results into CandidateDocument objects (url=link, title=title, source_domain=parsed_domain, initial provenance_status=UNVERIFIED). Transitions state to RANKING_CANDIDATES then VERIFYING_PROVENANCE. For each candidate: calls ProvenanceVerifier().verify(candidate, context, newer_policy_metadata), updates candidate.provenance_status and candidate.provenance_signals. Calls rank_candidates(candidates, context). Stores top 5 ranked candidates in session.candidates. Transitions state to AWAITING_CONFIRMATION. Returns JSON: {session_id, state, candidates: [list of candidate dicts with url, title, institution_name, university_name, policy_title, version, source_domain, provenance_status, confidence_score, provenance_signals]}",
+    "6. Add @app.route('/investigate/confirm', methods=['POST']) endpoint: Accepts JSON: {session_id, candidate_index: int}. Validates session exists and state is AWAITING_CONFIRMATION. Validates candidate_index < len(session.candidates). Sets session.selected_candidate = session.candidates[candidate_index]. Transitions state to DOWNLOADING_DOCUMENT. Downloads PDF from candidate.url using requests library with timeout=30, User-Agent header. Saves to temp file. Updates candidate.downloaded_path. Transitions state to COMPARING_POLICIES. Calls compare_policies(candidate.downloaded_path, session.context.uploaded_policy_path, config=load_config()). Transitions state to COMPLETED. Returns comparison result JSON matching /compare endpoint format, plus investigation metadata: {stats, rows, investigation: {session_id, discovered_policy: {url, title, provenance_status, provenance_signals}, uploaded_policy: session.context.newer_policy_metadata}}",
+    "7. Add @app.route('/investigate/status/<session_id>', methods=['GET']) endpoint: Returns current session state, candidates if available, errors if any. Returns JSON: {session_id, state, context (sanitized, no file paths), candidates (if state >= AWAITING_CONFIRMATION), errors}",
+    "8. Add error handling wrapper for all investigation endpoints: Try/except blocks catch exceptions, append to session.errors, transition state to FAILED if exception is critical (network timeout, download failure, comparison failure), return JSON error response with session_id and error message",
+    "9. Add cleanup utility: def cleanup_investigation_session(session_id: str) removes temp files (uploaded_policy_path, downloaded_path), deletes session from investigation_sessions dict. Call on COMPLETED or FAILED after response sent (or after 1-hour timeout)",
+    "10. Update frontend/app.py docstring to document new investigation endpoints"
+  ],
+  "acceptance_criteria": [
+    "6 new Flask routes exist: /investigate/start, /investigate/context, /investigate/search, /investigate/confirm, /investigate/status/<id>, and optional /investigate/cancel",
+    "All endpoints validate session state before processing",
+    "State transitions follow InvestigationStateMachine rules",
+    "/investigate/confirm endpoint calls compare_policies() from ml_pipeline and returns comparison result matching /compare response structure",
+    "Downloaded PDFs are stored in temp files and cleaned up after use",
+    "Error handling wraps all endpoints; errors stored in session.errors",
+    "Existing /compare and /sample endpoints unchanged",
+    "All endpoints return JSON responses with session_id and state",
+    "SERPER_API_KEY validated before use; clear error if missing"
+  ],
+  "verification": [
+    "Run pytest ml_pipeline/tests/test_pipeline.py -v to verify /compare endpoint unchanged",
+    "Start Flask server: python frontend/app.py",
+    "Test /investigate/start with curl: curl -F 'newer_policy=@sample_policies/Greenfield_Policy_2024.pdf' http://localhost:5000/investigate/start; verify session_id returned",
+    "Test /investigate/context with curl: curl -X POST -H 'Content-Type: application/json' -d '{\"session_id\":\"<id>\",\"institution_name\":\"Greenfield University\",\"affiliating_university\":\"Greenfield\",\"policy_title\":\"Academic Integrity Policy\"}' http://localhost:5000/investigate/context",
+    "Verify /compare endpoint still works: upload 2 PDFs via browser UI and confirm comparison loads"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

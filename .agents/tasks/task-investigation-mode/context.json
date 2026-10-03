@@ -1,0 +1,25 @@
+{
+  "project_type": "Flask backend + vanilla JavaScript frontend; ML pipeline (PyMuPDF, sentence-transformers, OpenAI/Gemini) for policy comparison",
+  "language": "Python 3.11+",
+  "build_system": "pip-based; no build step. Virtual environment at d:\\jig\\venv",
+  "test_framework": "pytest; tests at ml_pipeline/tests/ and root-level test files",
+  "build_command": "N/A (interpreted Python)",
+  "test_command": "pytest ml_pipeline/tests/ -v (from d:\\jig)",
+  "verification_instructions": "1. Run pytest to verify no regressions. 2. Start Flask dev server: python frontend/app.py. 3. Open http://localhost:5000 and test investigation flow manually. 4. Verify two-PDF comparison still works unchanged.",
+  "snapshot_or_generated_files": "None",
+  "environment_constraints": "Flask dev server runs on localhost:5000 with auto-browser open. API keys (GEMINI_API_KEY, GROQ_API_KEY) read from environment via python-dotenv. Never hardcode keys. Search API keys (SERPER_API_KEY, BRAVE_API_KEY) will be added to .env pattern.",
+  "contribution_requirements": "No AGENTS.md or CONTRIBUTING.md found; follow existing patterns. Keep API keys in environment variables. Do not break existing /compare endpoint. Do not modify ML pipeline comparison logic. Keep investigation logic separate from core pipeline.",
+  "key_patterns": "Flask routes use @app.route decorator; frontend/app.py has /compare and /sample endpoints. Frontend is vanilla JS with fetch API; index.html has single-file structure. ML pipeline uses Pydantic v2 models (ml_pipeline/models.py) for all data structures. Config loaded via ml_pipeline/config.py load_config() from environment. Tests use conftest.py fixtures (make_clause, make_pdf_bytes, sample_clause_a/b).",
+  "relevant_files": [
+    "frontend/app.py",
+    "frontend/templates/index.html",
+    "frontend/static/style.css",
+    "ml_pipeline/pipeline.py",
+    "ml_pipeline/config.py",
+    "ml_pipeline/models.py",
+    "ml_pipeline/tests/conftest.py",
+    "ml_pipeline/tests/test_pipeline.py",
+    "requirements.txt"
+  ],
+  "directory_structure": "d:\\jig (root): frontend/ (Flask app + templates + static), ml_pipeline/ (extractor, segmenter, aligner, detector, summarizer, citations, pipeline, models, config, tests/), sample_policies/ (Greenfield sample PDFs), venv/ (virtual environment), requirements.txt, conftest.py (pytest root config)"
+}

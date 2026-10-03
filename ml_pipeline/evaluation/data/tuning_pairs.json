@@ -1,0 +1,137 @@
+[
+  {
+    "id": "tune_001",
+    "category": "identical",
+    "clause_a_text": "Students must wear the prescribed institutional uniform on all working days and during all examinations conducted on campus.",
+    "clause_b_text": "Students must wear the prescribed institutional uniform on all working days and during all examinations conducted on campus.",
+    "expected_match": true,
+    "expected_change_type": "unchanged",
+    "notes": "Tuning: identical uniform clause."
+  },
+  {
+    "id": "tune_002",
+    "category": "paraphrased_wording_only",
+    "clause_a_text": "All students must attend the mandatory orientation programme conducted at the beginning of each academic year.",
+    "clause_b_text": "Attendance at the mandatory orientation programme held at the start of every academic year is compulsory for all students.",
+    "expected_match": true,
+    "expected_change_type": "wording_only",
+    "notes": "Tuning: paraphrase — same obligation expressed differently."
+  },
+  {
+    "id": "tune_003",
+    "category": "numeric_change",
+    "clause_a_text": "A student accumulating more than 3 disciplinary warnings in a semester will be placed on academic probation.",
+    "clause_b_text": "A student accumulating more than 2 disciplinary warnings in a semester will be placed on academic probation.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Tuning: warning threshold reduced from 3 to 2. Substantive."
+  },
+  {
+    "id": "tune_004",
+    "category": "negation_change",
+    "clause_a_text": "Students with active backlogs are permitted to participate in campus placement activities.",
+    "clause_b_text": "Students with active backlogs are not permitted to participate in campus placement activities.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Tuning: placement eligibility for backlog students reversed. Substantive."
+  },
+  {
+    "id": "tune_005",
+    "category": "modal_obligation_change",
+    "clause_a_text": "Faculty members should attend at least one national or international conference per academic year.",
+    "clause_b_text": "Faculty members must attend at least one national or international conference per academic year.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Tuning: 'should' (recommended) → 'must' (mandatory). Substantive."
+  },
+  {
+    "id": "tune_006",
+    "category": "date_deadline_change",
+    "clause_a_text": "Students must clear all hostel dues by 31st March to be eligible for re-admission to the hostel in the following academic year.",
+    "clause_b_text": "Students must clear all hostel dues by 28th February to be eligible for re-admission to the hostel in the following academic year.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Tuning: hostel dues deadline moved one month earlier. Substantive."
+  },
+  {
+    "id": "tune_007",
+    "category": "added_clause",
+    "clause_a_text": "",
+    "clause_b_text": "The institution shall maintain a Student Grievance Redressal Portal where students can submit complaints related to academic, administrative, or personal matters, and receive a response within 10 working days.",
+    "expected_match": false,
+    "expected_change_type": "added",
+    "notes": "Tuning: new student grievance portal clause added."
+  },
+  {
+    "id": "tune_008",
+    "category": "removed_clause",
+    "clause_a_text": "Faculty members with more than 10 years of service are entitled to a sabbatical leave of one semester for research and academic development purposes.",
+    "clause_b_text": "",
+    "expected_match": false,
+    "expected_change_type": "removed",
+    "notes": "Tuning: sabbatical leave entitlement clause removed."
+  },
+  {
+    "id": "tune_009",
+    "category": "renumbered_same_meaning",
+    "clause_a_text": "1.3 The librarian shall maintain a register of all books issued and returned, and submit a monthly report to the Principal.",
+    "clause_b_text": "2.3 The librarian shall maintain a register of all books issued and returned, and submit a monthly report to the Principal.",
+    "expected_match": true,
+    "expected_change_type": "wording_only",
+    "notes": "Tuning: library clause renumbered, content unchanged."
+  },
+  {
+    "id": "tune_010",
+    "category": "uncertain_ambiguous",
+    "clause_a_text": "Fee concession requests will be evaluated by the Fee Concession Committee and decisions communicated to the student within 15 working days.",
+    "clause_b_text": "The institution is committed to supporting deserving students through appropriate financial assistance as per available resources.",
+    "expected_match": true,
+    "expected_change_type": "uncertain",
+    "notes": "Tuning: specific process and timeline replaced by vague commitment."
+  },
+  {
+    "id": "tune_011",
+    "category": "paraphrased_wording_only",
+    "clause_a_text": "The warden is responsible for maintaining discipline and order within the hostel and must submit a monthly discipline report to the administration.",
+    "clause_b_text": "Hostel wardens are required to maintain discipline in the hostel premises and submit monthly discipline reports to the institutional administration.",
+    "expected_match": true,
+    "expected_change_type": "wording_only",
+    "notes": "Tuning: same warden obligation, different phrasing."
+  },
+  {
+    "id": "tune_012",
+    "category": "numeric_change",
+    "clause_a_text": "A late fee of Rs. 100 per day will be charged for examination fee payments made after the prescribed last date.",
+    "clause_b_text": "A late fee of Rs. 200 per day will be charged for examination fee payments made after the prescribed last date.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Tuning: late fee doubled from Rs. 100 to Rs. 200. Substantive."
+  },
+  {
+    "id": "tune_013",
+    "category": "identical",
+    "clause_a_text": "The institution shall ensure that the examination timetable is published at least 15 days before the commencement of end-semester examinations.",
+    "clause_b_text": "The institution shall ensure that the examination timetable is published at least 15 days before the commencement of end-semester examinations.",
+    "expected_match": true,
+    "expected_change_type": "unchanged",
+    "notes": "Tuning: identical examination timetable publication clause."
+  },
+  {
+    "id": "tune_014",
+    "category": "modal_obligation_change",
+    "clause_a_text": "The Head of Department must review the attendance register of all faculty members at the end of each month.",
+    "clause_b_text": "The Head of Department may review the attendance register of faculty members periodically.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Tuning: mandatory monthly review weakened to discretionary periodic review. Substantive."
+  },
+  {
+    "id": "tune_015",
+    "category": "negation_change",
+    "clause_a_text": "Students placed through campus recruitment are permitted to attend further placement drives conducted by the institution.",
+    "clause_b_text": "Students who have already secured placement through campus recruitment are not permitted to attend further placement drives conducted by the institution.",
+    "expected_match": true,
+    "expected_change_type": "substantive",
+    "notes": "Tuning: placed students' access to further drives reversed. Substantive."
+  }
+]

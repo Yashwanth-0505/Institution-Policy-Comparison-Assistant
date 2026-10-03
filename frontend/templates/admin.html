@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — POLICYX</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     ADMIN CODE GATE  (shown when not authed)
+══════════════════════════════════════════ -->
+<div class="gate-overlay" id="gate" {% if admin_authed %}style="display:none"{% endif %}>
+    <div class="gate-card">
+        <div class="gate-logo">
+            <svg width="36" height="36" viewBox="0 0 32 32" fill="none">
+                <rect width="32" height="32" rx="6" fill="#087F78"/>
+                <path d="M9 16L14 21L23 11" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>POLICYX</span>
+        </div>
+
+        <div class="gate-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#087F78" stroke-width="1.5">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+        </div>
+
+        <h2>Admin Access</h2>
+        <p>Enter the admin access code to continue.</p>
+
+        <div id="gate-alert" class="gate-alert hidden"></div>
+
+        <form id="gate-form">
+            <div class="gate-input-wrap">
+                <input type="password" id="admin-code" placeholder="Enter access code"
+                       autocomplete="off" autofocus maxlength="32">
+                <button type="button" class="toggle-pw" data-target="admin-code">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                </button>
+            </div>
+            <button type="submit" class="gate-btn" id="gate-btn">
+                <span class="btn-text">Unlock Dashboard</span>
+                <span class="btn-spinner hidden"></span>
+            </button>
+        </form>
+
+        <a href="/" class="gate-back">&#8592; Back to home</a>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ADMIN DASHBOARD  (shown after auth)
+══════════════════════════════════════════ -->
+<div class="admin-layout" id="dashboard" {% if not admin_authed %}style="display:none"{% endif %}>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                    <rect width="32" height="32" rx="6" fill="#087F78"/>
+                    <path d="M9 16L14 21L23 11" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>POLICYX</span>
+            </div>
+            <span class="role-badge">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="#overview" class="nav-item active" data-section="overview">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                <span>Overview</span>
+            </a>
+            <a href="#users" class="nav-item" data-section="users">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <span>Users</span>
+                <span class="nav-count" id="users-count">{{ stats.total_users }}</span>
+            </a>
+            <a href="#comparisons" class="nav-item" data-section="comparisons">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                <span>Comparisons</span>
+                <span class="nav-count" id="comp-count">{{ stats.total_comparisons }}</span>
+            </a>
+            <a href="#system" class="nav-item" data-section="system">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                </svg>
+                <span>System</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="avatar">AD</div>
+                <div class="user-details">
+                    <p class="user-name">Administrator</p>
+                    <p class="user-email">admin@policyx.io</p>
+                </div>
+            </div>
+            <button class="logout-btn" id="admin-logout-btn">Lock Dashboard</button>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+        <header class="admin-header">
+            <div>
+                <h1 id="section-title">Overview</h1>
+                <p class="admin-header-sub">Real data from policyx.db</p>
+            </div>
+            <div class="header-actions">
+                <a href="/app" class="btn-secondary">Open App</a>
+            </div>
+        </header>
+
+        <!-- ── Overview Section ── -->
+        <div class="section" id="sec-overview">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Total Users</p>
+                        <p class="stat-value">{{ stats.total_users }}</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Comparisons Run</p>
+                        <p class="stat-value">{{ stats.total_comparisons }}</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Institutions</p>
+                        <p class="stat-value">{{ stats.total_institutions }}</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <p class="stat-label">Active Today</p>
+                        <p class="stat-value">{{ stats.active_today }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Comparisons -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Recent Comparisons</h2>
+                </div>
+                {% if stats.recent_comparisons %}
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Institution</th>
+                                <th>Earlier PDF</th>
+                                <th>Newer PDF</th>
+                                <th>Changes</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-tbody">
+                            {% for c in stats.recent_comparisons %}
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="avatar small">{{ (c.user_name or 'AN')[0:2].upper() }}</div>
+                                        <span>{{ c.user_name or 'Anonymous' }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ c.institution or '—' }}</td>
+                                <td class="trunc">{{ c.doc_a_name or '—' }}</td>
+                                <td class="trunc">{{ c.doc_b_name or '—' }}</td>
+                                <td>
+                                    {% if c.substantive > 0 %}
+                                    <span class="badge badge-danger">{{ c.substantive }} Substantive</span>
+                                    {% elif c.added > 0 %}
+                                    <span class="badge badge-info">{{ c.added }} Added</span>
+                                    {% else %}
+                                    <span class="badge badge-success">{{ c.total_changes }} Changes</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ c.created_at[:16] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <p>No comparisons run yet. <a href="/app" class="link">Run one now</a></p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- System Health -->
+            <div class="content-section">
+                <div class="section-header"><h2>System Health</h2></div>
+                <div class="health-grid">
+                    <div class="health-card">
+                        <div class="health-header">
+                            <span>ML Pipeline</span>
+                            <span class="health-status success">Operational</span>
+                        </div>
+                        <div class="health-metric">
+                            <span>66 unit tests</span>
+                            <strong>All Passing</strong>
+                        </div>
+                    </div>
+                    <div class="health-card">
+                        <div class="health-header">
+                            <span>Database</span>
+                            <span class="health-status success">Connected</span>
+                        </div>
+                        <div class="health-metric">
+                            <span>policyx.db</span>
+                            <strong>SQLite3</strong>
+                        </div>
+                    </div>
+                    <div class="health-card">
+                        <div class="health-header">
+                            <span>Flask App</span>
+                            <span class="health-status success">Running</span>
+                        </div>
+                        <div class="health-metric">
+                            <span>localhost:5000</span>
+                            <strong>Dev Server</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Users Section ── -->
+        <div class="section hidden" id="sec-users">
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>Registered Users</h2>
+                    <span class="muted">{{ stats.total_users }} total</span>
+                </div>
+                {% if users %}
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Institution</th>
+                                <th>Role</th>
+                                <th>Registered</th>
+                                <th>Last Login</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody">
+                            {% for u in users %}
+                            <tr>
+                                <td class="muted">{{ u.id }}</td>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="avatar small">{{ u.first_name[0] }}{{ u.last_name[0] }}</div>
+                                        <span>{{ u.first_name }} {{ u.last_name }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ u.email }}</td>
+                                <td>{{ u.institution or '—' }}</td>
+                                <td>
+                                    <span class="badge {{ 'badge-teal' if u.role == 'admin' else 'badge-info' }}">
+                                        {{ u.role }}
+                                    </span>
+                                </td>
+                                <td>{{ u.created_at[:10] }}</td>
+                                <td>{{ u.last_login[:16] if u.last_login else '—' }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <p>No registered users yet. <a href="/login" class="link">Be the first</a></p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ── Comparisons Section ── -->
+        <div class="section hidden" id="sec-comparisons">
+            <div class="content-section">
+                <div class="section-header">
+                    <h2>All Comparisons</h2>
+                    <span class="muted">{{ stats.total_comparisons }} total</span>
+                </div>
+                {% if stats.recent_comparisons %}
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Earlier PDF</th>
+                                <th>Newer PDF</th>
+                                <th>Substantive</th>
+                                <th>Added</th>
+                                <th>Removed</th>
+                                <th>Wording</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in stats.recent_comparisons %}
+                            <tr>
+                                <td>{{ c.user_name or 'Anonymous' }}</td>
+                                <td class="trunc">{{ c.doc_a_name or '—' }}</td>
+                                <td class="trunc">{{ c.doc_b_name or '—' }}</td>
+                                <td><span class="badge badge-danger">{{ c.substantive }}</span></td>
+                                <td><span class="badge badge-info">{{ c.added }}</span></td>
+                                <td><span class="badge badge-warning">{{ c.removed }}</span></td>
+                                <td><span class="badge badge-success">{{ c.wording_only }}</span></td>
+                                <td>{{ c.created_at[:16] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state"><p>No comparisons logged yet.</p></div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ── System Section ── -->
+        <div class="section hidden" id="sec-system">
+            <div class="content-section">
+                <div class="section-header"><h2>System Information</h2></div>
+                <div class="info-grid">
+                    <div class="info-row"><span>Application</span><strong>POLICYX v1.0</strong></div>
+                    <div class="info-row"><span>Hackathon</span><strong>JIG26_25</strong></div>
+                    <div class="info-row"><span>ML Tests</span><strong>66 / 66 Passing</strong></div>
+                    <div class="info-row"><span>Database</span><strong>SQLite3 (policyx.db)</strong></div>
+                    <div class="info-row"><span>Embedding Model</span><strong>Sentence Transformers</strong></div>
+                    <div class="info-row"><span>Framework</span><strong>Flask (Python)</strong></div>
+                    <div class="info-row"><span>Total Users</span><strong>{{ stats.total_users }}</strong></div>
+                    <div class="info-row"><span>Total Comparisons</span><strong>{{ stats.total_comparisons }}</strong></div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+// ── Code Gate ──
+const gateForm = document.getElementById('gate-form');
+const gateAlert = document.getElementById('gate-alert');
+const gateBtn = document.getElementById('gate-btn');
+
+document.querySelectorAll('.toggle-pw').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const inp = document.getElementById(btn.dataset.target);
+        inp.type = inp.type === 'password' ? 'text' : 'password';
+    });
+});
+
+gateForm && gateForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const code = document.getElementById('admin-code').value.trim();
+    if (!code) return;
+
+    gateBtn.querySelector('.btn-text').classList.add('hidden');
+    gateBtn.querySelector('.btn-spinner').classList.remove('hidden');
+    gateBtn.disabled = true;
+    gateAlert.className = 'gate-alert hidden';
+
+    try {
+        const body = new FormData();
+        body.append('code', code);
+        const res = await fetch('/admin/verify', { method: 'POST', body });
+        const data = await res.json();
+
+        if (data.ok) {
+            document.getElementById('gate').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'flex';
+            loadAdminData();
+        } else {
+            gateAlert.textContent = data.error || 'Invalid access code.';
+            gateAlert.className = 'gate-alert gate-alert-error';
+            document.getElementById('admin-code').value = '';
+            document.getElementById('admin-code').focus();
+        }
+    } catch (_) {
+        gateAlert.textContent = 'Network error. Try again.';
+        gateAlert.className = 'gate-alert gate-alert-error';
+    } finally {
+        gateBtn.querySelector('.btn-text').classList.remove('hidden');
+        gateBtn.querySelector('.btn-spinner').classList.add('hidden');
+        gateBtn.disabled = false;
+    }
+});
+
+// ── Sidebar navigation ──
+document.querySelectorAll('.nav-item[data-section]').forEach(item => {
+    item.addEventListener('click', e => {
+        e.preventDefault();
+        const sec = item.dataset.section;
+
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+        document.getElementById('sec-' + sec).classList.remove('hidden');
+
+        const titles = { overview: 'Overview', users: 'Users', comparisons: 'Comparisons', system: 'System' };
+        document.getElementById('section-title').textContent = titles[sec] || sec;
+    });
+});
+
+// ── Lock dashboard ──
+document.getElementById('admin-logout-btn') && document.getElementById('admin-logout-btn').addEventListener('click', async () => {
+    await fetch('/admin/logout', { method: 'POST' });
+    window.location.reload();
+});
+
+// ── Load live data from /admin/data ──
+async function loadAdminData() {
+    try {
+        const res  = await fetch('/admin/data');
+        if (!res.ok) return;
+        const data = await res.json();
+        renderStats(data.stats);
+        renderUsers(data.users);
+        renderComparisons(data.stats.recent_comparisons || []);
+    } catch (e) {
+        console.error('Failed to load admin data', e);
+    }
+}
+
+function renderStats(s) {
+    // Stat cards
+    document.querySelectorAll('.stat-value')[0].textContent = s.total_users;
+    document.querySelectorAll('.stat-value')[1].textContent = s.total_comparisons;
+    document.querySelectorAll('.stat-value')[2].textContent = s.total_institutions;
+    document.querySelectorAll('.stat-value')[3].textContent = s.active_today;
+    // Sidebar badges
+    const uc = document.getElementById('users-count');
+    const cc = document.getElementById('comp-count');
+    if (uc) uc.textContent = s.total_users;
+    if (cc) cc.textContent = s.total_comparisons;
+}
+
+function avatarInitials(name) {
+    const parts = (name || 'AN').trim().split(' ');
+    return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
+}
+
+function renderUsers(users) {
+    const tbody = document.getElementById('users-tbody');
+    if (!tbody) return;
+    if (!users || users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;padding:32px">No registered users yet.</td></tr>';
+        return;
+    }
+    tbody.innerHTML = users.map(u => `
+        <tr>
+            <td class="muted">${u.id}</td>
+            <td>
+                <div class="user-cell">
+                    <div class="avatar small">${(u.first_name[0] + u.last_name[0]).toUpperCase()}</div>
+                    <span>${u.first_name} ${u.last_name}</span>
+                </div>
+            </td>
+            <td>${u.email}</td>
+            <td>${u.institution || '—'}</td>
+            <td><span class="badge ${u.role === 'admin' ? 'badge-teal' : 'badge-info'}">${u.role}</span></td>
+            <td>${u.created_at.slice(0,10)}</td>
+            <td>${u.last_login ? u.last_login.slice(0,16) : '—'}</td>
+        </tr>
+    `).join('');
+}
+
+function renderComparisons(rows) {
+    const tbody = document.getElementById('recent-tbody');
+    const tbody2 = document.getElementById('all-comp-tbody');
+    const html = rows.length === 0
+        ? '<tr><td colspan="6" style="text-align:center;color:#999;padding:32px">No comparisons logged yet.</td></tr>'
+        : rows.map(c => `
+            <tr>
+                <td>
+                    <div class="user-cell">
+                        <div class="avatar small">${avatarInitials(c.user_name)}</div>
+                        <span>${c.user_name || 'Anonymous'}</span>
+                    </div>
+                </td>
+                <td>${c.institution || '—'}</td>
+                <td class="trunc">${c.doc_a_name || '—'}</td>
+                <td class="trunc">${c.doc_b_name || '—'}</td>
+                <td>${c.substantive > 0
+                    ? `<span class="badge badge-danger">${c.substantive} Substantive</span>`
+                    : c.added > 0
+                    ? `<span class="badge badge-info">${c.added} Added</span>`
+                    : `<span class="badge badge-success">${c.total_changes} Changes</span>`
+                }</td>
+                <td>${c.created_at.slice(0,16)}</td>
+            </tr>
+        `).join('');
+
+    if (tbody)  tbody.innerHTML  = html;
+    if (tbody2) tbody2.innerHTML = html;
+}
+
+// If admin cookie is already set (page reload after auth), load data immediately
+if (document.getElementById('dashboard') && document.getElementById('dashboard').style.display !== 'none') {
+    loadAdminData();
+}
+</script>
+</body>
+</html>

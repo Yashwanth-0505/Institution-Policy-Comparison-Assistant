@@ -1,0 +1,40 @@
+{
+  "id": "FEAT-004",
+  "type": "test",
+  "description": "Add comprehensive tests for investigation feature. This feature creates integration tests for the investigation workflow, unit tests for provenance verification, and frontend tests to verify the UI state transitions. Tests ensure investigation mode does not break existing comparison workflow.",
+  "status": "pending",
+  "steps": [
+    "1. Create ml_pipeline/investigation/tests/__init__.py",
+    "2. Create ml_pipeline/investigation/tests/conftest.py: Add fixtures make_investigation_context(), make_candidate_document(), mock_serper_response() returning sample search results JSON, sample_metadata_dict() for extracted PDF metadata",
+    "3. Create ml_pipeline/investigation/tests/test_metadata_extractor.py: Test extract_metadata_from_pdf() with sample PDF (use make_pdf_bytes from ml_pipeline/tests/conftest.py), verify extracted title, institution name, dates; test with PDF containing no institution name (returns empty dict); test with malformed PDF (handles gracefully)",
+    "4. Create ml_pipeline/investigation/tests/test_search_client.py: Test SerperSearchClient.search_policies() with mocked requests.post response (use pytest-mock or unittest.mock), verify query construction includes institution + university + policy_title + 'filetype:pdf', verify response parsing extracts title, link, snippet; test API key missing (raises ValueError); test network timeout (raises exception); test empty results (returns empty list)",
+    "5. Create ml_pipeline/investigation/tests/test_ranker.py: Test rank_candidates() with 5 mock candidates having different provenance statuses (VERIFIED, STRONG, LIMITED, UNVERIFIED) and confidence scores; verify sort order: VERIFIED first regardless of score, then STRONG, LIMITED, UNVERIFIED; within same status, higher confidence first; verify source_domain priority (.edu domains ranked higher than .com)",
+    "6. Create test_investigation_endpoints.py in project root: Test /investigate/start with Flask test client (from flask import Flask; app.test_client()), upload sample PDF, verify session_id returned and state is COLLECTING_CONTEXT; test /investigate/context with valid session, verify state transitions to SEARCHING_SOURCES; test /investigate/search with mocked SerperSearchClient (patch 'ml_pipeline.investigation.search_client.SerperSearchClient'), verify candidates returned and state is AWAITING_CONFIRMATION; test /investigate/confirm with mocked requests.get for PDF download and compare_policies, verify comparison result returned and state is COMPLETED; test invalid session_id returns 404; test missing SERPER_API_KEY returns 400 error",
+    "7. Create test_investigation_isolation.py in project root: Test that /compare endpoint still works after investigation endpoints added (upload 2 PDFs, verify comparison result); test that /sample endpoint unchanged; verify investigation_sessions dict does not interfere with /compare; test concurrent investigation + comparison requests (start investigation session, run /compare while investigation session active, verify both complete successfully)",
+    "8. Add investigation UI state tests to test_pdf_upload.py (if exists) or create new test_investigation_ui.py: Use Selenium or Playwright (if available) or manual test script: verify mode toggle switches upload box visibility; verify investigation dialog appears after upload in investigate mode; verify candidate list renders when candidates returned; verify clicking candidate calls /investigate/confirm; verify manual upload option returns to two-PDF upload; verify existing comparison UI unchanged in compare mode",
+    "9. Create test_provenance_edge_cases.py: Test ProvenanceVerifier with edge cases: candidate with no institution name (LOW score, UNVERIFIED); candidate with institution name mismatch (UNVERIFIED); candidate from .edu domain but wrong university (LIMITED or UNVERIFIED depending on other signals); candidate with all signals matching (VERIFIED_PROVENANCE); candidate with partial match (STRONG_PROVENANCE); verify provenance_signals dict includes all evaluated signals with pass/fail status",
+    "10. Update project root conftest.py if needed to add investigation fixtures accessible to all test files; add cleanup fixture to delete temp files created during investigation tests"
+  ],
+  "acceptance_criteria": [
+    "All investigation module tests pass: pytest ml_pipeline/investigation/tests/ -v",
+    "All integration tests pass: pytest test_investigation_endpoints.py test_investigation_isolation.py -v",
+    "Existing pipeline tests still pass: pytest ml_pipeline/tests/ -v",
+    "Root-level tests still pass: pytest test_pdf_upload.py -v (if exists)",
+    "ProvenanceVerifier tests cover all 4 provenance statuses with realistic scenarios",
+    "SerperSearchClient tests use mocked HTTP responses (no real API calls in tests)",
+    "Investigation endpoint tests verify state transitions at each step",
+    "Isolation tests confirm /compare and /sample endpoints unaffected by investigation code",
+    "Tests clean up temp files (uploaded PDFs, downloaded PDFs) after completion",
+    "All tests follow existing patterns from ml_pipeline/tests/conftest.py (make_clause, make_pdf_bytes, fixtures)"
+  ],
+  "verification": [
+    "Run full test suite: pytest -v from d:\\jig",
+    "Verify test count increased by at least 15 new tests",
+    "Verify no test failures or regressions",
+    "Run tests with coverage: pytest --cov=ml_pipeline.investigation --cov=frontend.app --cov-report=term-missing",
+    "Manually verify investigation flow works end-to-end: python frontend/app.py, open browser, test investigate mode, verify comparison result loads",
+    "Manually verify existing comparison flow works: upload 2 PDFs in compare mode, verify results unchanged"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

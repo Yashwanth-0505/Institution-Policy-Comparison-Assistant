@@ -1,0 +1,42 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Add investigation UI to frontend (index.html, style.css). This feature creates the 2-question dialog, candidate selection interface, and provenance display, all integrated into the existing upload workspace without breaking the two-PDF comparison workflow. The UI follows the existing design system (CSS custom properties, vanilla JS, no frameworks) and uses the same upload box style for single-file mode.",
+  "status": "pending",
+  "steps": [
+    "1. Add investigation mode toggle to frontend/templates/index.html upload-workspace section: After 'Compare Two Versions' header, add radio button group: <div class='mode-toggle'><label><input type='radio' name='mode' value='compare' checked> Compare two versions</label><label><input type='radio' name='mode' value='investigate'> Find earlier version</label></div>. When 'investigate' selected, hide uploadA box, show only uploadB box, change button text to 'Start Investigation'",
+    "2. Add investigation dialog HTML to index.html (initially hidden with class='hidden'): <section id='investigation-dialog' class='investigation-dialog hidden'><div class='dialog-content'><h2>Help us find the earlier policy</h2><p>Answer two questions so we can search authoritative sources:</p><form id='investigation-form'><div class='form-group'><label>Institution name</label><input type='text' id='inv-institution' required><label>Affiliated university (if different)</label><input type='text' id='inv-university'></div><div class='form-group'><label>Policy title</label><input type='text' id='inv-policy-title' required><label>Department (optional)</label><input type='text' id='inv-department'><label>Academic year (optional)</label><input type='text' id='inv-year'></div><button type='submit' class='btn btn-primary'>Search for earlier version</button><button type='button' id='cancel-investigation' class='btn btn-ghost'>Cancel</button></form></div></section>",
+    "3. Add candidate selection UI HTML to index.html (initially hidden): <section id='candidate-list' class='candidate-list hidden'><h2>Found candidate policies</h2><p>Select the earlier version to compare:</p><div id='candidates-container'></div><button id='upload-manually' class='btn btn-secondary'>None of these — upload manually</button></section>",
+    "4. Add investigation result labels to comparison results: When rendering stats, add source labels: 'Earlier policy: <discovered-title> (discovered from <domain>)' and 'Newer policy: <filename> (uploaded)'. Show provenance status badge next to discovered policy",
+    "5. Add CSS to frontend/static/style.css for investigation UI: .mode-toggle {display:flex;gap:1rem;margin-bottom:1rem;} .mode-toggle label {cursor:pointer;padding:0.5rem 1rem;border:1px solid var(--border);border-radius:8px;transition:all 0.2s;} .mode-toggle input:checked + label {background:var(--accent-light);border-color:var(--accent);} .investigation-dialog {position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:200;} .dialog-content {background:var(--card);border-radius:12px;padding:2rem;max-width:600px;width:90%;box-shadow:var(--shadow-lg);} .form-group {display:grid;gap:0.75rem;margin-bottom:1.5rem;} .form-group label {font-size:var(--text-sm);font-weight:600;} .form-group input {padding:0.625rem;border:1px solid var(--border);border-radius:8px;} .candidate-list {background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:2rem;} .candidate-item {border:1px solid var(--border);border-radius:8px;padding:1.5rem;margin-bottom:1rem;cursor:pointer;transition:all 0.2s;} .candidate-item:hover {border-color:var(--accent);background:var(--accent-light);} .candidate-title {font-weight:700;font-size:var(--text-lg);margin-bottom:0.5rem;} .candidate-meta {font-size:var(--text-sm);color:var(--text-secondary);margin-bottom:0.75rem;} .provenance-badge {display:inline-block;padding:0.25rem 0.75rem;border-radius:6px;font-size:var(--text-xs);font-weight:700;margin-top:0.5rem;} .provenance-verified {background:var(--color-added-light);color:var(--color-added);} .provenance-strong {background:var(--color-wording-light);color:var(--color-wording);} .provenance-limited {background:var(--color-changed-light);color:var(--color-changed);} .provenance-unverified {background:var(--color-removed-light);color:var(--color-removed);} .provenance-signals {font-size:var(--text-xs);color:var(--text-muted);margin-top:0.5rem;}",
+    "6. Add JavaScript investigation logic to index.html <script> section: Add global let investigationSessionId = null; let investigationMode = 'compare'; Add event listener for mode toggle radio buttons to set investigationMode and show/hide uploadA box. Modify $('#compare').onclick to check investigationMode: if 'investigate', upload only newFile to /investigate/start, store session_id, show investigation dialog; if 'compare', keep existing logic unchanged",
+    "7. Add investigation form submit handler: $('#investigation-form').onsubmit = async (e) => {e.preventDefault(); collect form values; POST to /investigate/context with session_id and form data; on success, hide dialog, show loading notice, POST to /investigate/search with session_id; on success, render candidates}",
+    "8. Add renderCandidates(candidates) function: For each candidate, create .candidate-item div with candidate.title, candidate.institution_name + candidate.university_name, candidate.source_domain, provenance badge based on candidate.provenance_status (VERIFIED_PROVENANCE -> 'Verified', STRONG_PROVENANCE -> 'Strong', LIMITED_PROVENANCE -> 'Limited', UNVERIFIED -> 'Unverified'), provenance_signals summary (e.g. 'Domain: Official university • Title match: 92% • Date: Confirmed earlier'). On click, call confirmCandidate(index)",
+    "9. Add confirmCandidate(index) function: POST to /investigate/confirm with session_id and candidate_index; on success, receives comparison result; call existing load(result) function to render comparison; add investigation metadata to comparison header showing discovered policy source and provenance status",
+    "10. Add cancel/manual upload handlers: $('#cancel-investigation').onclick clears session, hides dialog, returns to upload screen. $('#upload-manually').onclick hides candidate list, shows 'Please upload the earlier policy manually' message with file input, on file selected uploads both files to /compare as normal two-PDF flow"
+  ],
+  "acceptance_criteria": [
+    "Mode toggle radio buttons switch between 'Compare two versions' and 'Find earlier version'",
+    "In investigate mode, only uploadB (newer policy) box is visible",
+    "Investigation dialog appears after uploading newer policy, prompts for 2 questions (institution + university, policy title + optional department/year)",
+    "Candidate list displays up to 5 candidates with title, institution, domain, provenance badge, and provenance signals summary",
+    "Clicking a candidate triggers /investigate/confirm, then loads comparison results using existing comparison UI",
+    "Comparison results show source labels: discovered policy vs uploaded policy, with provenance badge on discovered policy",
+    "Manual upload option allows user to exit investigation flow and upload earlier policy themselves",
+    "Existing two-PDF comparison workflow unchanged when 'Compare two versions' mode selected",
+    "All investigation UI follows existing design system (colors, typography, spacing, transitions)",
+    "Investigation dialog is accessible (keyboard navigation, ARIA labels)"
+  ],
+  "verification": [
+    "Start Flask server: python frontend/app.py",
+    "Open http://localhost:5000 in browser",
+    "Verify default mode is 'Compare two versions' and both upload boxes visible",
+    "Switch to 'Find earlier version' mode; verify uploadA box hidden, uploadB box visible, button text changed",
+    "Upload a PDF in investigate mode; verify dialog appears with 2-question form",
+    "Fill form with test data (Institution: 'Greenfield University', University: 'Greenfield', Title: 'Academic Integrity Policy'); submit; verify candidate list appears (may be empty if SERPER_API_KEY not set or no results found)",
+    "Switch back to 'Compare two versions' mode; upload 2 PDFs; verify existing comparison works unchanged",
+    "Test keyboard navigation: Tab through dialog fields, Enter to submit, Escape to cancel"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

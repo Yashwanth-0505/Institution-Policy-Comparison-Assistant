@@ -1,0 +1,12 @@
+{
+  "task_id": "task-investigation-mode",
+  "task_description": "Add 'Missing Previous Policy' investigation mode to POLICYX Flask app, enabling users to upload only the newer policy, answer 2 questions, search for the previous version, verify provenance, confirm candidate, and feed into existing ML comparison pipeline",
+  "status": "pending",
+  "feature_order": [
+    "FEAT-001",
+    "FEAT-002",
+    "FEAT-003",
+    "FEAT-004"
+  ],
+  "blocked_reason": null
+}
